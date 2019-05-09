@@ -102,12 +102,14 @@ public class AgentBootstrap {
             String agentJar = args.substring(0, index);
             final String agentArgs = args.substring(index);
 
+            //zjd -agent "${arthas_lib_dir}/arthas-agent.jar"
             File agentJarFile = new File(agentJar);
             if (!agentJarFile.exists()) {
                 ps.println("Agent jar file does not exist: " + agentJarFile);
                 return;
             }
-
+            
+            //zjd 通过agent.jar所在路径去找spy.jar
             File spyJarFile = new File(agentJarFile.getParentFile(), ARTHAS_SPY_JAR);
             if (!spyJarFile.exists()) {
                 ps.println("Spy jar file does not exist: " + spyJarFile);

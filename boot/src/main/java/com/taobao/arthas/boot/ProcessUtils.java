@@ -58,6 +58,7 @@ public class ProcessUtils {
         }
 
         // read choice
+        //zjd 读取用户选择的进程号
         String line = new Scanner(System.in).nextLine();
         if (line.trim().isEmpty()) {
             // get the first process id
@@ -221,6 +222,7 @@ public class ProcessUtils {
 
         ProcessBuilder pb = new ProcessBuilder(command);
         try {
+        	//zjd 执行java -jar arthas-core.jar 命令，执行core中的main方法，这个main方法中会attach到目标进程
             final Process proc = pb.start();
             Thread redirectStdout = new Thread(new Runnable() {
                 @Override
@@ -275,6 +277,12 @@ public class ProcessUtils {
                 javaList.add(javaFile);
             }
         }
+        
+        /*
+         * zjd 日志：
+         * [DEBUG] Found java: /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java
+			[DEBUG] Found java: /usr/lib/jvm/java-7-openjdk-amd64/jre/../bin/java
+         */
 
         if (javaList.isEmpty()) {
             AnsiLog.debug("Can not find java/java.exe under current java home: " + javaHome);
@@ -323,6 +331,8 @@ public class ProcessUtils {
 
     private static File findJps() {
         // Try to find jps under java.home and System env JAVA_HOME
+    	//zjd java.home points to the JRE installation path. 
+    	//@see https://stackoverflow.com/questions/45441516/difference-between-java-home-and-java-home
         String javaHome = System.getProperty("java.home");
         String[] paths = { "bin/jps", "bin/jps.exe", "../bin/jps", "../bin/jps.exe" };
 

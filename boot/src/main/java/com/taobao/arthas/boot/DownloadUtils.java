@@ -41,6 +41,24 @@ public class DownloadUtils {
      *
      * @param mavenMetaData
      * @return
+     * 
+     * zjd mavenMetaData的数据结构：
+     * <metadata>
+			<groupId>com.taobao.arthas</groupId>
+			<artifactId>arthas-packaging</artifactId>
+			<version>3.1.0</version>
+			<versioning>
+			<release>3.1.0</release>
+			<versions>
+			<version>3.0.0-RC</version>
+			<version>3.0.3</version>
+			<version>3.0.4</version>
+			<version>3.0.5</version>
+			<version>3.1.0</version>
+			</versions>
+			<lastUpdated>20190415145700</lastUpdated>
+			</versioning>
+		</metadata>
      */
     public static String readMavenReleaseVersion(String mavenMetaData) {
         try {

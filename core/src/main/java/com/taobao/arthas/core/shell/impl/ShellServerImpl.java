@@ -88,6 +88,10 @@ public class ShellServerImpl extends ShellServer {
         return this;
     }
 
+    /*
+     * zjd 客户端发起连接请求时，会执行这里。
+     * 参数 term: TermImpl
+     */
     public void handleTerm(Term term) {
         synchronized (this) {
             // That might happen with multiple ser
@@ -96,12 +100,17 @@ public class ShellServerImpl extends ShellServer {
                 return;
             }
         }
-
+        
+        //创建一个新的shell回话session
         ShellImpl session = createShell(term);
-        session.setWelcome(welcomeMessage);
+        session.setWelcome(welcomeMessage);	//welcomeMessage: Arthas的log等信息
         session.closedFuture.setHandler(new SessionClosedHandler(this, session));
-        session.init();
+        //这里会通过term输出welcome等信息
+        session.init();	
+        
         sessions.put(session.id, session); // Put after init so the close handler on the connection is set
+        
+        //zjd 读取终端用户输入的命令
         session.readline(); // Now readline
     }
 

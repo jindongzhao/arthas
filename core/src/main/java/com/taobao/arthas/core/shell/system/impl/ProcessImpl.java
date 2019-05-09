@@ -367,6 +367,7 @@ public class ProcessImpl implements Process {
         @Override
         public void run() {
             try {
+            	//zjd handler是哪个对象？
                 handler.handle(process);
             } catch (Throwable t) {
                 logger.error(null, "Error during processing the command:", t);

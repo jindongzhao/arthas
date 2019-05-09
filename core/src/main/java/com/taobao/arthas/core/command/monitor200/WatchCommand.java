@@ -27,6 +27,11 @@ import com.taobao.middleware.cli.annotations.Summary;
         "  watch *StringUtils isBlank params '#cost>100'\n" +
         "  watch -E -b org\\.apache\\.commons\\.lang\\.StringUtils isBlank params[0]\n" +
         Constants.WIKI + Constants.WIKI_HOME + "watch")
+/**
+ * zjd process()处理命令的这个方法在父类EnhancerCommand中
+ * @author zhaojindong
+ *
+ */
 public class WatchCommand extends EnhancerCommand {
 
     private String classPattern;
@@ -177,7 +182,11 @@ public class WatchCommand extends EnhancerCommand {
         }
         return methodNameMatcher;
     }
-
+    
+    /**
+     * zjd WatchCommand的AdviceListener，会在enhance()时通过 process.register(lock, listener);把这个listener注册到
+     * AdviceWeaver中的advices(adviceId,Listener)，然后AdviceWeaver在拦截类的方法执行时，找到这个listener，然后回调其中的方法
+     */
     @Override
     protected AdviceListener getAdviceListener(CommandProcess process) {
         return new WatchAdviceListener(this, process);

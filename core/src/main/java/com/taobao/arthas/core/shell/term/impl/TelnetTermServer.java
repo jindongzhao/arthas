@@ -34,18 +34,27 @@ public class TelnetTermServer extends TermServer {
         this.connectionTimeout = connectionTimeout;
     }
 
+    /*
+     * zjd 日志：handler: TermServerTermHandler
+     */
     @Override
     public TermServer termHandler(Handler<Term> handler) {
         termHandler = handler;
         return this;
     }
-
+    
+    /*
+     * zjd listenHandler 为： TermServerListenHandler(...,BindHandler,...)
+     */
     @Override
     public TermServer listen(Handler<Future<TermServer>> listenHandler) {
         // TODO: charset and inputrc from options
         bootstrap = new NettyTelnetTtyBootstrap().setHost(hostIp).setPort(port);
         try {
             bootstrap.start(new Consumer<TtyConnection>() {
+            	/*
+            	 * zjd 应该是相当于 NIO的accept事件，当有client连接到这个server时，会触发
+            	 */
                 @Override
                 public void accept(final TtyConnection conn) {
                     termHandler.handle(new TermImpl(Helper.loadKeymap(), conn));

@@ -28,6 +28,18 @@ public class Arthas {
         attachAgent(parse(args));
     }
 
+    /*
+     * 参数：
+     *  // "${JAVA_HOME}"/bin/java \
+        // ${opts} \
+        // -jar "${arthas_lib_dir}/arthas-core.jar" \
+        // -pid ${TARGET_PID} \
+        // -target-ip ${TARGET_IP} \
+        // -telnet-port ${TELNET_PORT} \
+        // -http-port ${HTTP_PORT} \
+        // -core "${arthas_lib_dir}/arthas-core.jar" \
+        // -agent "${arthas_lib_dir}/arthas-agent.jar"
+     */
     private Configure parse(String[] args) {
         Option pid = new TypedOption<Integer>().setType(Integer.class).setShortName("pid").setRequired(true);
         Option core = new TypedOption<String>().setType(String.class).setShortName("core").setRequired(true);
@@ -42,7 +54,8 @@ public class Arthas {
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
                 .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
-
+        
+        //存放命令行传递的参数
         Configure configure = new Configure();
         configure.setJavaPid((Integer) commandLine.getOptionValue("pid"));
         configure.setArthasAgent((String) commandLine.getOptionValue("agent"));
@@ -67,6 +80,8 @@ public class Arthas {
                 virtualMachineDescriptor = descriptor;
             }
         }
+        
+        //zjd 目标jvm进程
         VirtualMachine virtualMachine = null;
         try {
             if (null == virtualMachineDescriptor) { // 使用 attach(String pid) 这种方式
@@ -78,6 +93,8 @@ public class Arthas {
             Properties targetSystemProperties = virtualMachine.getSystemProperties();
             String targetJavaVersion = JavaVersionUtils.javaVersionStr(targetSystemProperties);
             String currentJavaVersion = JavaVersionUtils.javaVersionStr();
+            
+            //zjd 目标jvm进程的jdk版本与启动arthas时使用的jdk版本 比较
             if (targetJavaVersion != null && currentJavaVersion != null) {
                 if (!targetJavaVersion.equals(currentJavaVersion)) {
                     AnsiLog.warn("Current VM java version: {} do not match target VM java version: {}, attach may fail.",
@@ -91,6 +108,8 @@ public class Arthas {
             //convert jar path to unicode string
             configure.setArthasAgent(encodeArg(arthasAgentPath));
             configure.setArthasCore(encodeArg(configure.getArthasCore()));
+            
+            //zjd 加载agent的jar包，attach到目标进程，同时把config信息传递到agent的agentMain方法
             virtualMachine.loadAgent(arthasAgentPath,
                     configure.getArthasCore() + ";" + configure.toString());
         } finally {

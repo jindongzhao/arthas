@@ -92,11 +92,17 @@ public class Enhancer implements ClassFileTransformer {
                 FieldUtils.getField(spyClass, "AFTER_INVOKING_METHOD").get(null),
                 FieldUtils.getField(spyClass, "THROW_INVOKING_METHOD").get(null));
 	}
-
+	
+	/**
+	 *  zjd 此类作为ClassFileTransformer加入到Instrument中时，会调用这个方法，增强matchingClasses可以配置的className类
+	 */
     @Override
     public byte[] transform(final ClassLoader inClassLoader, String className, Class<?> classBeingRedefined,
                     ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
         try {
+        	/**
+        	 * zjd 通过Enhancer初始化时传入的matchingClasses【用户输入的类名字表达式】来匹配jvm中的class，如果匹配，则增强
+        	 */
             // 这里要再次过滤一次，为啥？因为在transform的过程中，有可能还会再诞生新的类
             // 所以需要将之前需要转换的类集合传递下来，再次进行判断
             if (!matchingClasses.contains(classBeingRedefined)) {
@@ -156,7 +162,10 @@ public class Enhancer implements ClassFileTransformer {
                 }
 
             };
-
+            
+            /*
+             * zjd AdviceWeaver用户增强class，在方法执行前、后、异常等切面加入拦截
+             */
             // 生成增强字节码
             cr.accept(new AdviceWeaver(adviceId, isTracing, skipJDKTrace, cr.getClassName(), methodNameMatcher, affect,
                             cw), EXPAND_FRAMES);

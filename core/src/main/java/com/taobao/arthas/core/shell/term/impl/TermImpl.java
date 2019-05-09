@@ -5,6 +5,8 @@ import com.taobao.arthas.core.shell.handlers.term.CloseHandlerWrapper;
 import com.taobao.arthas.core.shell.handlers.term.DefaultTermStdinHandler;
 import com.taobao.arthas.core.shell.handlers.term.EventHandler;
 import com.taobao.arthas.core.shell.handlers.Handler;
+import com.taobao.arthas.core.shell.handlers.shell.CommandManagerCompletionHandler;
+import com.taobao.arthas.core.shell.handlers.shell.ShellLineHandler;
 import com.taobao.arthas.core.shell.handlers.term.RequestHandler;
 import com.taobao.arthas.core.shell.handlers.term.SizeHandlerWrapper;
 import com.taobao.arthas.core.shell.handlers.term.StdinHandlerWrapper;
@@ -76,6 +78,11 @@ public class TermImpl implements Term {
         readline.readline(conn, prompt, new RequestHandler(this, lineHandler));
     }
 
+    /*
+     * zjd 读取终端  用户输入的命令
+    	lineHandler： ShellLineHandler()
+    	completionHandler： CommandManagerCompletionHandler()
+     */
     public void readline(String prompt, Handler<String> lineHandler, Handler<Completion> completionHandler) {
         if (conn.getStdinHandler() != echoHandler) {
             throw new IllegalStateException();

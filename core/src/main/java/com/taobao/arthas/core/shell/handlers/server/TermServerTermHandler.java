@@ -14,6 +14,9 @@ public class TermServerTermHandler implements Handler<Term> {
         this.shellServer = shellServer;
     }
 
+    /*
+     * zjd 日志： term： TermImpl
+     */
     @Override
     public void handle(Term term) {
         shellServer.handleTerm(term);

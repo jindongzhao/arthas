@@ -163,6 +163,7 @@ public class TelnetConsole {
         CLI cli = CLIConfigurator.define(TelnetConsole.class);
 
         try {
+        	//zjd 把args的value  set到telnetConsole对象中
             CommandLine commandLine = cli.parse(Arrays.asList(args));
 
             CLIConfigurator.inject(commandLine, telnetConsole);
@@ -229,7 +230,8 @@ public class TelnetConsole {
                     height = terminal.getHeight();
                 }
             }
-
+            
+            //zjd 客户端
             final TelnetClient telnet = new TelnetClient();
             telnet.setConnectTimeout(DEFAULT_CONNECTION_TIMEOUT);
 
@@ -265,6 +267,7 @@ public class TelnetConsole {
             });
 
             try {
+            	//zjd 连接到服务端
                 telnet.connect(telnetConsole.getTargetIp(), telnetConsole.getPort());
             } catch (IOException e) {
                 System.out.println("Connect to telnet server error: " + telnetConsole.getTargetIp() + " "

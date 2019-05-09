@@ -110,7 +110,8 @@ public class ShellImpl implements Shell {
         term.interruptHandler(new InterruptHandler(this));
         term.suspendHandler(new SuspendHandler(this));
         term.closeHandler(new CloseHandler(this));
-
+        
+        //zjd 输出welcome信息：arthas 的logo，wiki地址，time等信息
         if (welcome != null && welcome.length() > 0) {
             term.write(welcome + "\n");
         }
@@ -142,6 +143,7 @@ public class ShellImpl implements Shell {
     }
 
     public void readline() {
+    	//zjd term:TermImpl
         term.readline(Constants.DEFAULT_PROMPT, new ShellLineHandler(this),
                 new CommandManagerCompletionHandler(commandManager));
     }

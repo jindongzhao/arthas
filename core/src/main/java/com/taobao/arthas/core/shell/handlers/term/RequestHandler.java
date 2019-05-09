@@ -11,6 +11,11 @@ public class RequestHandler implements Consumer<String> {
     private TermImpl term;
     private final Handler<String> lineHandler;
 
+    /**
+     * zjd lineHandler: ShellLineHandler
+     * @param term
+     * @param lineHandler
+     */
     public RequestHandler(TermImpl term, Handler<String> lineHandler) {
         this.term = term;
         this.lineHandler = lineHandler;

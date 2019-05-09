@@ -23,7 +23,10 @@ public class ShellLineHandler implements Handler<String> {
         this.shell = shell;
         this.term = shell.term();
     }
-
+    
+    /**
+     * zjd 处理客户端输入的命令
+     */
     @Override
     public void handle(String line) {
         if (line == null) {

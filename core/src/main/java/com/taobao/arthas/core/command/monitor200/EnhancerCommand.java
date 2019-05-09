@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.taobao.arthas.core.advisor.AdviceListener;
+import com.taobao.arthas.core.advisor.AdviceWeaver;
 import com.taobao.arthas.core.advisor.Enhancer;
 import com.taobao.arthas.core.advisor.InvokeTraceable;
 import com.taobao.arthas.core.shell.cli.Completion;
@@ -22,6 +23,7 @@ import com.taobao.arthas.core.util.matcher.Matcher;
 import com.taobao.middleware.logger.Logger;
 
 /**
+ * zjd 需要做class增强的command的父类，实现了class增强等功能
  * @author beiwei30 on 29/11/2016.
  */
 public abstract class EnhancerCommand extends AnnotatedCommand {
@@ -125,6 +127,10 @@ public abstract class EnhancerCommand extends AnnotatedCommand {
 
             // 这里做个补偿,如果在enhance期间,unLock被调用了,则补偿性放弃
             if (session.getLock() == lock) {
+            	/*
+            	 * 把具体的Command子类（比如WatchCommand）的getAdviceListener方法返回的listener注册进来。
+            	 * process会调用AdviceWeaver.reg(enhanceLock, listener);
+            	 */
                 // 注册通知监听器
                 process.register(lock, listener);
                 if (process.isForeground()) {

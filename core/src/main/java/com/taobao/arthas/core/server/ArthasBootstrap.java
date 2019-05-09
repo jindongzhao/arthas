@@ -79,32 +79,42 @@ public class ArthasBootstrap {
         }
 
         try {
+        	//zjd ShellServerImpl 封装了Telnet和Http两种通信方式的server端
             ShellServerOptions options = new ShellServerOptions()
                             .setInstrumentation(instrumentation)
                             .setPid(pid)
                             .setSessionTimeout(configure.getSessionTimeout() * 1000);
             shellServer = new ShellServerImpl(options, this);
+            
+            //zjd shellClient和shellServer传输的命令封装 和 解析
             BuiltinCommandPack builtinCommands = new BuiltinCommandPack();
             List<CommandResolver> resolvers = new ArrayList<CommandResolver>();
             resolvers.add(builtinCommands);
+            
             // TODO: discover user provided command resolver
+            //zjd 创建 telnet server，底层通过NettyTelnetTtyBootstrap 实现
             if (configure.getTelnetPort() > 0) {
                 shellServer.registerTermServer(new TelnetTermServer(configure.getIp(), configure.getTelnetPort(),
                                 options.getConnectionTimeout()));
             } else {
                 logger.info("telnet port is {}, skip bind telnet server.", configure.getTelnetPort());
             }
+            
+
+            //zjd 创建 http server，底层通过NettyWebsocketTtyBootstrap 实现
             if (configure.getHttpPort() > 0) {
                 shellServer.registerTermServer(new HttpTermServer(configure.getIp(), configure.getHttpPort(),
                                 options.getConnectionTimeout()));
             } else {
                 logger.info("http port is {}, skip bind http server.", configure.getHttpPort());
             }
-
+            
+            //zjd 设置shell client和shell server命令传输的解析类
             for (CommandResolver resolver : resolvers) {
                 shellServer.registerCommandResolver(resolver);
             }
-
+            
+            //zjd 开启Server端端口监控，通过调用NettyWebsocketTtyBootstrap和NettyTelnetTtyBootstrap的listen方法，启动Netty 的server端监控线程
             shellServer.listen(new BindHandler(isBindRef));
 
             logger.info("as-server listening on network={};telnet={};http={};timeout={};", configure.getIp(),

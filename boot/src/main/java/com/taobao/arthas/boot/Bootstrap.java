@@ -53,6 +53,7 @@ public class Bootstrap {
     private static final int DEFAULT_TELNET_PORT = 3658;
     private static final int DEFAULT_HTTP_PORT = 8563;
     private static final String DEFAULT_TARGET_IP = "127.0.0.1";
+    //zjd 用户的home目录下的.arthas/文件夹，用于存放download的arthas.cor,arthas.agent等jar文件
     private static final File ARTHAS_LIB_DIR = new File(
                     System.getProperty("user.home") + File.separator + ".arthas" + File.separator + "lib");
 
@@ -223,7 +224,8 @@ public class Bootstrap {
         String mavenMetaData = null;
 
         Bootstrap bootstrap = new Bootstrap();
-
+        
+        //zjd 把命令行的参数set到Bootstrap对象中
         CLI cli = CLIConfigurator.define(Bootstrap.class);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 
@@ -286,6 +288,7 @@ public class Bootstrap {
         // select pid
         if (pid < 0) {
             try {
+            	//zjd 列出所有的java进程，让用户选择，选中的进程号会存储在pid变量里
                 pid = ProcessUtils.select(bootstrap.isVerbose(), telnetPortPid);
             } catch (InputMismatchException e) {
                 System.out.println("Please input an integer to select pid.");
@@ -391,6 +394,7 @@ public class Bootstrap {
                 }
             } else {
                 if (remoteLastestVersion != null) {
+                	//zjd 当已经安装的arthas版本号比maven库里存放的release版本号低时，自动下载最新的版本jar包
                     if (localLastestVersion.compareTo(remoteLastestVersion) < 0) {
                         AnsiLog.info("local lastest version: {}, remote lastest version: {}, try to download from remote.",
                                         localLastestVersion, remoteLastestVersion);
@@ -400,6 +404,7 @@ public class Bootstrap {
             }
             if (needDownload) {
                 // try to download arthas from remote server.
+            	// zjd 下载arthas-core.jar  arthas-agent.jar等文件到用户home目录下。
                 DownloadUtils.downArthasPackaging(bootstrap.getRepoMirror(), bootstrap.isuseHttp(),
                                 remoteLastestVersion, ARTHAS_LIB_DIR.getAbsolutePath());
                 localLastestVersion = remoteLastestVersion;
@@ -438,8 +443,15 @@ public class Bootstrap {
             }
 
             AnsiLog.info("Try to attach process " + pid);
+            /*
+             *  zjd 启动日志
+             *  Start arthas-core.jar args: 
+             *  [-jar, /home/appops/.arthas/lib/3.1.0/arthas/arthas-core.jar, -pid, 11774, -target-ip, 127.0.0.1, 
+             *  -telnet-port, 3658, -http-port, 8563, -core, /home/appops/.arthas/lib/3.1.0/arthas/arthas-core.jar, 
+             *  -agent, /home/appops/.arthas/lib/3.1.0/arthas/arthas-agent.jar]
+             */
             AnsiLog.debug("Start arthas-core.jar args: " + attachArgs);
-            //启动arthas进程
+            //zjd 启动arthas进程
             ProcessUtils.startArthasCore(pid, attachArgs);
 
             AnsiLog.info("Attach process {} success.", pid);
@@ -449,6 +461,7 @@ public class Bootstrap {
             System.exit(0);
         }
 
+        //zjd 加载arthas-client.jar，并且调用其中TelnetConsole的main方法，启动客户端，用于接收用户输入的命令
         // start java telnet client
         // find arthas-client.jar
         URLClassLoader classLoader = new URLClassLoader(
@@ -479,6 +492,7 @@ public class Bootstrap {
         telnetArgs.add("" + bootstrap.getTelnetPort());
 
         AnsiLog.info("arthas-client connect {} {}", bootstrap.getTargetIp(), bootstrap.getTelnetPort());
+        //zjd 日志：Start arthas-client.jar args: [127.0.0.1, 3658]
         AnsiLog.debug("Start arthas-client.jar args: " + telnetArgs);
         mainMethod.invoke(null, new Object[] { telnetArgs.toArray(new String[0]) });
     }
