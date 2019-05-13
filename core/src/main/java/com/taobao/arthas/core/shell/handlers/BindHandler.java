@@ -18,7 +18,10 @@ public class BindHandler implements Handler<Future<Void>> {
     public BindHandler(AtomicBoolean isBindRef) {
         this.isBindRef = isBindRef;
     }
-
+    
+    /**
+     * 启动netty server失败等情况发生时，会调用这个方法，打印error日志，并设置isBind为false。
+     */
     @Override
     public void handle(Future<Void> event) {
         if (event.failed()) {

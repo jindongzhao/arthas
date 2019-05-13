@@ -66,10 +66,11 @@ public class AgentBootstrap {
     }
 
     private static ClassLoader getClassLoader(Instrumentation inst, File spyJarFile, File agentJarFile) throws Throwable {
-        // 将Spy添加到BootstrapClassLoader
+        // 1, 将Spy添加到BootstrapClassLoader。
         inst.appendToBootstrapClassLoaderSearch(new JarFile(spyJarFile));
 
-        // 构造自定义的类加载器，尽量减少Arthas对现有工程的侵蚀
+        // 2, 构造自定义的类加载器，尽量减少Arthas对现有工程的侵蚀.
+        // 为什么不把spy的类也加载到这个classLoader？是因为Spy中的编织类必须跟目标类在同一个classLoader里？
         return loadOrDefineClassLoader(agentJarFile);
     }
 
@@ -79,9 +80,17 @@ public class AgentBootstrap {
         }
         return arthasClassLoader;
     }
-
+    
+    /**
+     * 初始化Spy类的配置
+    * @Description 
+    * @param 
+    * @return 
+    * @throws 
+    * @author: zhaojindong  @date: 10 May 2019 10:11:46
+     */
     private static void initSpy(ClassLoader classLoader) throws ClassNotFoundException, NoSuchMethodException {
-        Class<?> adviceWeaverClass = classLoader.loadClass(ADVICEWEAVER);
+        Class<?> adviceWeaverClass = classLoader.loadClass(ADVICEWEAVER);	//加载编织类AdviceWeaver
         Method onBefore = adviceWeaverClass.getMethod(ON_BEFORE, int.class, ClassLoader.class, String.class,
                 String.class, String.class, Object.class, Object[].class);
         Method onReturn = adviceWeaverClass.getMethod(ON_RETURN, Object.class);
@@ -92,10 +101,19 @@ public class AgentBootstrap {
         Method reset = AgentBootstrap.class.getMethod(RESET);
         Spy.initForAgentLauncher(classLoader, onBefore, onReturn, onThrows, beforeInvoke, afterInvoke, throwInvoke, reset);
     }
-
+    
+    /**
+     * 在Arthas.main()中发起attach时，参数使用“；”分隔option，用”=“连接key=value
+    * @Description 
+    * @param 
+    * @return 
+    * @throws 
+    * @author: zhaojindong  @date: 10 May 2019 10:00:20
+     */
     private static synchronized void main(String args, final Instrumentation inst) {
         try {
             ps.println("Arthas server agent start...");
+            ps.println("agentmain() received params:" + args);
             // 传递的args参数分两个部分:agentJar路径和agentArgs, 分别是Agent的JAR包路径和期望传递到服务端的参数
             args = decodeArg(args);
             int index = args.indexOf(';');
@@ -117,9 +135,13 @@ public class AgentBootstrap {
             }
 
             /**
+             * 把Spy.jar里的类放入BootstrapClassLoader的搜索路径
+             * 创建agent自己的classLoader，加载agent.jar
              * Use a dedicated thread to run the binding logic to prevent possible memory leak. #195
              */
             final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, agentJarFile);
+            
+            //初始化Spy类的配置
             initSpy(agentLoader);
 
             Thread bindingThread = new Thread() {
@@ -151,6 +173,8 @@ public class AgentBootstrap {
 
     private static void bind(Instrumentation inst, ClassLoader agentLoader, String args) throws Throwable {
         /**
+         * Arthas.java发起attach是就是把Configure对象字符串序列化后变成了这里的args，
+         * 所以现在又把args反序列化成Configure对象
          * <pre>
          * Configure configure = Configure.toConfigure(args);
          * int javaPid = configure.getJavaPid();
@@ -159,13 +183,20 @@ public class AgentBootstrap {
          */
         Class<?> classOfConfigure = agentLoader.loadClass(ARTHAS_CONFIGURE);
         Object configure = classOfConfigure.getMethod(TO_CONFIGURE, String.class).invoke(null, args);
+        
         int javaPid = (Integer) classOfConfigure.getMethod(GET_JAVA_PID).invoke(configure);
+        
+        /**
+         * 调用ArthasBootstrap.getInstance()，获取到ArthasBootstrap的单例对象，判断是否已经有线程bind过这个javaPid
+         */
         Class<?> bootstrapClass = agentLoader.loadClass(ARTHAS_BOOTSTRAP);
         Object bootstrap = bootstrapClass.getMethod(GET_INSTANCE, int.class, Instrumentation.class).invoke(null, javaPid, inst);
+        
         boolean isBind = (Boolean) bootstrapClass.getMethod(IS_BIND).invoke(bootstrap);
         if (!isBind) {
             try {
                 ps.println("Arthas start to bind...");
+                //未bind，则调用ArthasBootstrap.bind()
                 bootstrapClass.getMethod(BIND, classOfConfigure).invoke(bootstrap, configure);
                 ps.println("Arthas server bind success.");
                 return;

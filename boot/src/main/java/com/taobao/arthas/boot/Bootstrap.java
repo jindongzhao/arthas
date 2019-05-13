@@ -38,6 +38,11 @@ import com.taobao.middleware.cli.annotations.Summary;
  * @author hengyunabc 2018-10-26
  *
  */
+/**
+ * 使用Ali CLI的注解，定义命令行。用户启动arthas时，会把命令行中的参数注入到这个类中
+ * @author zhaojindong
+ *
+ */
 @Name("arthas-boot")
 @Summary("Bootstrap Arthas")
 @Description("EXAMPLES:\n" + "  java -jar arthas-boot.jar <pid>\n" + "  java -jar arthas-boot.jar --target-ip 0.0.0.0\n"
@@ -225,7 +230,7 @@ public class Bootstrap {
 
         Bootstrap bootstrap = new Bootstrap();
         
-        //zjd 把命令行的参数set到Bootstrap对象中
+        //zjd 把命令行的参数set到Bootstrap对象中,Bootstrap里定义了Cli注解，所以通过Cli api可以set进去
         CLI cli = CLIConfigurator.define(Bootstrap.class);
         CommandLine commandLine = cli.parse(Arrays.asList(args));
 

@@ -33,7 +33,14 @@ public class ArthasBootstrap {
     private static Logger logger = LogUtil.getArthasLogger();
     private static ArthasBootstrap arthasBootstrap;
 
+    /*
+     * 这个Atomic变量是jvm中线程共同可见，
+    	所以即使同时执行了多个线程去bind(多个用户同时去attach到同一个目标java进程后，就会在目标进程中同时调用bind操作），
+    	每个线程都持有这个单例的ArthasBootstrap对象，只要在做bind操作时判断一下isBindRef即可。
+    	而如果isBindRef只是Boolean变量，则各个线程在set这个变量后不会立即刷回主存，则会造成并发问题。
+    */
     private AtomicBoolean isBindRef = new AtomicBoolean(false);
+    
     private int pid;
     private Instrumentation instrumentation;
     private Thread shutdown;
@@ -157,7 +164,8 @@ public class ArthasBootstrap {
     }
 
     /**
-     * 单例
+     * 单例。
+     * 参数javaPid不会影响单例的生成，只是为了传给ArthasBootstrap
      *
      * @param instrumentation JVM增强
      * @return ArthasServer单例

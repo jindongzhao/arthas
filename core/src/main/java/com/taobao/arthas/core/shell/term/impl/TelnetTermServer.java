@@ -25,7 +25,8 @@ public class TelnetTermServer extends TermServer {
     private String hostIp;
     private int port;
     private long connectionTimeout;
-
+    
+    //处理远程客户端的连接请求
     private Handler<Term> termHandler;
 
     public TelnetTermServer(String hostIp, int port, long connectionTimeout) {
@@ -51,6 +52,7 @@ public class TelnetTermServer extends TermServer {
         // TODO: charset and inputrc from options
         bootstrap = new NettyTelnetTtyBootstrap().setHost(hostIp).setPort(port);
         try {
+        	//zjd 启动Netty的telnet server
             bootstrap.start(new Consumer<TtyConnection>() {
             	/*
             	 * zjd 应该是相当于 NIO的accept事件，当有client连接到这个server时，会触发

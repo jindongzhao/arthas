@@ -15,10 +15,11 @@ public class TermServerTermHandler implements Handler<Term> {
     }
 
     /*
-     * zjd 日志： term： TermImpl
+     * zjd  term： TermImpl
      */
     @Override
     public void handle(Term term) {
+    	//又回到shellServerImpl中，处理客户端的建立连接请求
         shellServer.handleTerm(term);
     }
 }

@@ -52,7 +52,7 @@ public class Spy {
      * 用于启动线程初始化
      */
     public static void initForAgentLauncher(
-            ClassLoader classLoader,
+            ClassLoader classLoader,	//这个classLoader里加载的是agent.jar
             Method onBeforeMethod,
             Method onReturnMethod,
             Method onThrowsMethod,

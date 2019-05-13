@@ -236,7 +236,8 @@ public class ProcessUtils {
 
                 }
             });
-
+            
+            //启动的子进程返回的错误信息
             Thread redirectStderr = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -253,7 +254,8 @@ public class ProcessUtils {
             redirectStderr.start();
             redirectStdout.join();
             redirectStderr.join();
-
+            
+            //启动的子进程的异常退出
             int exitValue = proc.exitValue();
             if (exitValue != 0) {
                 AnsiLog.error("attach fail, targetPid: " + targetPid);

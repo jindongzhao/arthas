@@ -143,7 +143,7 @@ public class ShellImpl implements Shell {
     }
 
     public void readline() {
-    	//zjd term:TermImpl
+    	//zjd term:TermImpl；CommandManagerCompletionHandler：命令行处理类
         term.readline(Constants.DEFAULT_PROMPT, new ShellLineHandler(this),
                 new CommandManagerCompletionHandler(commandManager));
     }

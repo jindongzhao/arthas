@@ -11,6 +11,7 @@ import com.taobao.arthas.core.shell.handlers.server.SessionClosedHandler;
 import com.taobao.arthas.core.shell.handlers.server.SessionsClosedHandler;
 import com.taobao.arthas.core.shell.handlers.server.TermServerListenHandler;
 import com.taobao.arthas.core.shell.handlers.server.TermServerTermHandler;
+import com.taobao.arthas.core.shell.handlers.shell.CommandManagerCompletionHandler;
 import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.system.impl.GlobalJobControllerImpl;
 import com.taobao.arthas.core.shell.system.impl.InternalCommandManager;
@@ -78,6 +79,10 @@ public class ShellServerImpl extends ShellServer {
 
     @Override
     public synchronized ShellServer registerCommandResolver(CommandResolver resolver) {
+    	/*
+    	 * zjd resolvers在初始化时已经：resolvers.add(new BuiltinCommandResolver());
+    	 * 所以，这里会把resolver加入到已经存在的list的前面
+    	 */
         resolvers.add(0, resolver);
         return this;
     }
@@ -89,7 +94,7 @@ public class ShellServerImpl extends ShellServer {
     }
 
     /*
-     * zjd 客户端发起连接请求时，会执行这里。
+     * zjd 客户端发起与Netty server建立连接请求时，会执行这里。
      * 参数 term: TermImpl
      */
     public void handleTerm(Term term) {
@@ -101,7 +106,7 @@ public class ShellServerImpl extends ShellServer {
             }
         }
         
-        //创建一个新的shell回话session
+        //创建一个新的shell回话session，把TermImpl对象set到ShellImpl中
         ShellImpl session = createShell(term);
         session.setWelcome(welcomeMessage);	//welcomeMessage: Arthas的log等信息
         session.closedFuture.setHandler(new SessionClosedHandler(this, session));
@@ -110,10 +115,14 @@ public class ShellServerImpl extends ShellServer {
         
         sessions.put(session.id, session); // Put after init so the close handler on the connection is set
         
-        //zjd 读取终端用户输入的命令
+        //zjd 读取终端用户输入的命令，
+        //同时把Shell命令处理类ShellLineHandler和业务命令处理类CommandManagerCompletionHandler设置到ShellImpl中的TermImpl里
         session.readline(); // Now readline
     }
 
+    /**
+     * zjd listenHandler==>BindHandler
+     */
     @Override
     public ShellServer listen(final Handler<Future<Void>> listenHandler) {
         final List<TermServer> toStart;
@@ -129,9 +138,16 @@ public class ShellServerImpl extends ShellServer {
             listenHandler.handle(Future.<Void>succeededFuture());
             return this;
         }
+        
+        //TermServerListenHandler作用:封装BindHandler，主要是调用BindHandler.handler(),附加动作是关闭Netty server等。
         Handler<Future<TermServer>> handler = new TermServerListenHandler(this, listenHandler, toStart);
+        
         for (TermServer termServer : toStart) {
+        	//设置处理远程客户端 建立连接的请求处理类。当有远程客户端连接过来时，触发Netty Server的accept方法，accept方法会调termHandler.handler().
             termServer.termHandler(new TermServerTermHandler(this));
+            
+            //1，启动netty server，准备接受客户端的连接请求；
+            //2，handler 是在Netty server启动成功或者失败后，调用的处理类，主要是打印错误日志，设置isBind为false。
             termServer.listen(handler);
         }
         return this;
