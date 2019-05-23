@@ -82,6 +82,8 @@ public class Enhancer implements ClassFileTransformer {
 
         // 初始化间谍, AgentLauncher会把各种hook设置到ArthasClassLoader当中
         // 这里我们需要把这些hook取出来设置到目标classloader当中
+        // zjd TODO agentMain启动时，已经通过AgentBootstrap.initSpy()初始化了Spy类的各字段（各Method字段值为AdviceWeaver中的Method）
+        // zjd 这里把Spy自己的Field取出来，然后又set进去，没有必要，可以去掉这段代码
         Method initMethod = spyClass.getMethod("init", ClassLoader.class, Method.class,
                 Method.class, Method.class, Method.class, Method.class, Method.class);
         initMethod.invoke(null, arthasClassLoader,
@@ -180,7 +182,7 @@ public class Enhancer implements ClassFileTransformer {
             // 成功计数
             affect.cCnt(1);
 
-            // 派遣间谍
+            // 派遣间谍，初始化Spy类
             try {
                 spy(inClassLoader);
             } catch (Throwable t) {
@@ -243,7 +245,7 @@ public class Enhancer implements ClassFileTransformer {
     }
 
     /**
-     * 是否过滤Arthas加载的类
+     * 是否过滤Arthas加载的类。这就是在加载arthas包时new一个新的classLoader的好处。
      */
     private static boolean isSelf(Class<?> clazz) {
         return null != clazz

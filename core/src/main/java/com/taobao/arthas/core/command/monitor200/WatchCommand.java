@@ -29,6 +29,7 @@ import com.taobao.middleware.cli.annotations.Summary;
         Constants.WIKI + Constants.WIKI_HOME + "watch")
 /**
  * zjd process()处理命令的这个方法在父类EnhancerCommand中
+ * 字段上使用了Cli注解，可以通过Cli api把命令行字符串直接inject到这个对象中
  * @author zhaojindong
  *
  */
@@ -47,6 +48,14 @@ public class WatchCommand extends EnhancerCommand {
     private boolean isRegEx = false;
     private int numberOfLimit = 100;
 
+    /**
+     * zjd 第一个参数，-f，-b这些参数不算
+    * @Description 
+    * @param 
+    * @return 
+    * @throws 
+    * @author: zhaojindong  @date: 20 May 2019 09:30:23
+     */
     @Argument(index = 0, argName = "class-pattern")
     @Description("The full qualified class name you want to watch")
     public void setClassPattern(String classPattern) {

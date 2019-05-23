@@ -12,6 +12,7 @@ import com.taobao.arthas.core.view.ObjectView;
 import com.taobao.middleware.logger.Logger;
 
 /**
+ * AdviceWeaver.methodOnBegin.before()会调用reg的Listener
  * @author beiwei30 on 29/11/2016.
  */
 class WatchAdviceListener extends ReflectAdviceListenerAdapter {

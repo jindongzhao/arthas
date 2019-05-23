@@ -17,6 +17,7 @@ import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.FileUtils;
 import io.termd.core.function.Consumer;
 import io.termd.core.readline.Function;
+import io.termd.core.readline.Functions;
 import io.termd.core.readline.Keymap;
 import io.termd.core.readline.Readline;
 import io.termd.core.tty.TtyConnection;
@@ -31,6 +32,7 @@ import java.util.List;
  */
 public class TermImpl implements Term {
 
+	//操作系统默认的命令行处理函数。也可以使用：Functions.loadDefaults()
     private static final List<Function> readlineFunctions = Helper.loadServices(Function.class.getClassLoader(), Function.class);
 
     private Readline readline;
@@ -49,14 +51,19 @@ public class TermImpl implements Term {
 
     public TermImpl(Keymap keymap, TtyConnection conn) {
         this.conn = conn;
+        
+        //zjd 初始化termd的Readline，用来处理客户端输入的命令行
         readline = new Readline(keymap);
         readline.setHistory(FileUtils.loadCommandHistory(new File(Constants.CMD_HISTORY_FILE)));
         for (Function function : readlineFunctions) {
             readline.addFunction(function);
         }
 
+        //zjd 回显用户输入的命令行字符串到客户端
         echoHandler = new DefaultTermStdinHandler(this);
         conn.setStdinHandler(echoHandler);
+        
+        //zjd 客户端输入ctrl+C，ctrl+D，ctrl+Z的事件处理
         conn.setEventHandler(new EventHandler(this));
     }
 
@@ -79,7 +86,7 @@ public class TermImpl implements Term {
     }
 
     /*
-     * zjd 读取终端  用户输入的命令
+     * zjd 处理客户端输入的命令行
     	lineHandler： ShellLineHandler()
     	completionHandler： CommandManagerCompletionHandler()
      */
@@ -174,6 +181,7 @@ public class TermImpl implements Term {
                 data = function.apply(data);
             }
         }
+        //zjd 调用termd的TtyConnection写数据到客户端
         conn.write(data);
         return this;
     }

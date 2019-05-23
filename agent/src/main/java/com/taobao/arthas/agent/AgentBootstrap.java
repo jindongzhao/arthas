@@ -136,7 +136,8 @@ public class AgentBootstrap {
 
             /**
              * 把Spy.jar里的类放入BootstrapClassLoader的搜索路径
-             * 创建agent自己的classLoader，加载agent.jar
+             * 创建agent自己的classLoader，加载agent.jar。
+             * 在Enhancer.isSelf()方法中会通过匹配出来的类的classLoader是不是Arthas的classLoader来判断匹配的类是不是Arthas的类，这样进行过滤。
              * Use a dedicated thread to run the binding logic to prevent possible memory leak. #195
              */
             final ClassLoader agentLoader = getClassLoader(inst, spyJarFile, agentJarFile);

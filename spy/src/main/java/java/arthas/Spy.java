@@ -5,11 +5,15 @@ import java.lang.reflect.Method;
 /**
  * 间谍类<br/>
  * 藏匿在各个ClassLoader中
+ * zjd TODO 这个类的作用是？
  * Created by vlinux on 15/8/23.
  */
 public class Spy {
 
-
+	
+	/**
+	 * 这些fields会在AgentBootstrap.initSpy()时，初始化进来。
+	 */
     // -- 各种Advice的钩子引用 --
     public static volatile Method ON_BEFORE_METHOD;
     public static volatile Method ON_RETURN_METHOD;
@@ -30,6 +34,7 @@ public class Spy {
 
     /**
      * 用于普通的间谍初始化
+     * zjd 这个init方法在Enhancer.spy()会被调用
      */
     public static void init(
             ClassLoader classLoader,
@@ -50,6 +55,7 @@ public class Spy {
 
     /**
      * 用于启动线程初始化
+     * zjd 这个方法在AgentBootstrap.initSpy()会被调用
      */
     public static void initForAgentLauncher(
             ClassLoader classLoader,	//这个classLoader里加载的是agent.jar

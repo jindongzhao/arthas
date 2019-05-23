@@ -155,18 +155,21 @@ public class JobControllerImpl implements JobController {
         List<CliToken> pipelineTokens = new ArrayList<CliToken>();
         boolean isPipeline = false;
         RedirectHandler redirectHandler = null;
+        
+        //zjd 命令执行结果的数据通过stdoutHandlerChain输出给客户端
         List<Function<String, String>> stdoutHandlerChain = new ArrayList<Function<String, String>>();
         String cacheLocation = null;
         while (tokens.hasNext()) {
             CliToken remainingToken = tokens.next();
             if (remainingToken.isText()) {
                 String tokenValue = remainingToken.value();
+                //zjd 命令行中包含 “管道”
                 if ("|".equals(tokenValue)) {
                     isPipeline = true;
                     // 将管道符|之后的部分注入为输出链上的handler
                     injectHandler(stdoutHandlerChain, pipelineTokens);
                     continue;
-                } else if (">>".equals(tokenValue) || ">".equals(tokenValue)) {
+                } else if (">>".equals(tokenValue) || ">".equals(tokenValue)) {	//zjd 命令行中包含“重定向”
                     String name = getRedirectFileName(tokens);
                     if (name == null) {
                         // 如果没有指定重定向文件名，那么重定向到以jobid命名的缓存中
@@ -187,15 +190,21 @@ public class JobControllerImpl implements JobController {
                 remaining.add(remainingToken);
             }
         }
+        
         injectHandler(stdoutHandlerChain, pipelineTokens);
+        
         if (redirectHandler != null) {
             stdoutHandlerChain.add(redirectHandler);
         } else {
+        	//没有重定向，则使用TermHandler处理输出执行结果
             stdoutHandlerChain.add(new TermHandler(term));
+            
+            //是否日志中保存命令执行结果
             if (GlobalOptions.isSaveResult) {
                 stdoutHandlerChain.add(new RedirectHandler());
             }
         }
+        //zjd TODO 变量名ProcessOutput小写
         ProcessOutput ProcessOutput = new ProcessOutput(stdoutHandlerChain, cacheLocation, term);
         return new ProcessImpl(command, remaining, command.processHandler(), ProcessOutput);
     }

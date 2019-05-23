@@ -106,7 +106,8 @@ public class ShellServerImpl extends ShellServer {
             }
         }
         
-        //创建一个新的shell回话session，把TermImpl对象set到ShellImpl中
+        //zjd 创建一个新的shell回话session，把TermImpl对象set到ShellImpl中
+        //TermImpl封装了termd的接口，这里再被ShellImpl封装
         ShellImpl session = createShell(term);
         session.setWelcome(welcomeMessage);	//welcomeMessage: Arthas的log等信息
         session.closedFuture.setHandler(new SessionClosedHandler(this, session));

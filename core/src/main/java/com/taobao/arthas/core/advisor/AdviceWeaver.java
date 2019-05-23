@@ -488,6 +488,9 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
                 switch (keyOfMethod) {
 
                     case KEY_ARTHAS_ADVICE_BEFORE_METHOD: {
+                    	/**
+                    	 * zjd 调用Spy的ON_BEFORE_METHOD方法
+                    	 */
                         getStatic(ASM_TYPE_SPY, "ON_BEFORE_METHOD", ASM_TYPE_METHOD);
                         break;
                     }

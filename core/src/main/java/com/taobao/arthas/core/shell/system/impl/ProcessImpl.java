@@ -367,7 +367,7 @@ public class ProcessImpl implements Process {
         @Override
         public void run() {
             try {
-            	//zjd handler是哪个对象？
+            	//zjd handler是AnnotatedCommandImpl.ProcessHandler，在BuiltinCommandPack中创建Command时new的
                 handler.handle(process);
             } catch (Throwable t) {
                 logger.error(null, "Error during processing the command:", t);
@@ -595,7 +595,8 @@ public class ProcessImpl implements Process {
             this.cacheLocation = cacheLocation;
             this.term = term;
         }
-
+        
+        //zjd 对应不含管道、重定向等的命令行，stdoutHandlerChain中的值包含：TermHandler,TermHandler会调用termd的TtyConnection写数据到客户端
         private void write(String data) {
             if (stdoutHandlerChain != null) {
                 for (Function<String, String> function : stdoutHandlerChain) {
