@@ -364,7 +364,10 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
         this.matcher = matcher;
         this.affect = affect;
     }
-
+    
+    /** 
+     * 重载ASM的ClassMethod.visit
+     */
     @Override
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         super.visit(version, access, name, signature, superName, interfaces);
@@ -393,7 +396,10 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
                 || !matcher.matching(methodName)
                 || ArthasCheckUtils.isEquals(methodName, "<clinit>");
     }
-
+    
+    /**
+     * 重载ASM的ClassMethod.visitMethod
+     */
     @Override
     public MethodVisitor visitMethod(
             final int access,
@@ -452,11 +458,13 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
                 // println msg
                 visitFieldInsn(GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;");
                 if (StringUtils.isBlank(append.toString())) {
+                	//先把参数入栈
                     visitLdcInsn(append.append(msg).toString());
                 } else {
                     visitLdcInsn(append.append(" >> ").append(msg).toString());
                 }
-
+                
+                //调用方法，取上一步入栈的参数作为方法的参数
                 visitMethodInsn(INVOKEVIRTUAL, "java/io/PrintStream", "println", "(Ljava/lang/String;)V", false);
             }
 
@@ -490,6 +498,7 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
                     case KEY_ARTHAS_ADVICE_BEFORE_METHOD: {
                     	/**
                     	 * zjd 调用Spy的ON_BEFORE_METHOD方法
+                    	 * getstatic	获取类的静态字段，将其值压入栈顶
                     	 */
                         getStatic(ASM_TYPE_SPY, "ON_BEFORE_METHOD", ASM_TYPE_METHOD);
                         break;
@@ -611,12 +620,12 @@ public class AdviceWeaver extends ClassVisitor implements Opcodes {
                         // 推入Method.invoke()的第一个参数
                         pushNull();
 
-                        // 方法参数
+                        // 方法参数，作为下一步调用Method.invoke()的参数
                         loadArrayForBefore();
 
                         _debug(append, "debug:onMethodEnter() > loadAdviceMethod() > loadArrayForBefore()");
 
-                        // 调用方法
+                        // 调用Method对象的方法invoke()
                         invokeVirtual(ASM_TYPE_METHOD, ASM_METHOD_METHOD_INVOKE);
                         pop();
 
