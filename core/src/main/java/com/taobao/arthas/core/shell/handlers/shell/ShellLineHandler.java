@@ -7,7 +7,9 @@ import com.taobao.arthas.core.shell.impl.ShellImpl;
 import com.taobao.arthas.core.shell.system.ExecStatus;
 import com.taobao.arthas.core.shell.system.Job;
 import com.taobao.arthas.core.shell.term.Term;
+import com.taobao.arthas.core.util.LogUtil;
 import com.taobao.arthas.core.util.TokenUtils;
+import com.taobao.middleware.logger.Logger;
 
 import java.util.List;
 
@@ -16,6 +18,8 @@ import java.util.List;
  */
 public class ShellLineHandler implements Handler<String> {
 
+    private static Logger logger = LogUtil.getArthasLogger();
+    
     private ShellImpl shell;
     private Term term;
 
@@ -29,6 +33,8 @@ public class ShellLineHandler implements Handler<String> {
      */
     @Override
     public void handle(String line) {
+    	logger.info("received client command line:"+line);
+    	
         if (line == null) {
             // EOF
             handleExit();

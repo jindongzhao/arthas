@@ -274,6 +274,12 @@ public class TelnetConsole {
                                 + telnetConsole.getPort());
                 throw e;
             }
+            
+            //zjd test telnet client
+            Thread.sleep(1000*10);
+            System.out.println("test help commond from TelnetConsole, start");
+            telnet.getOutputStream().write("help".getBytes());
+            System.out.println("test help commond from TelnetConsole, end");
 
             if (cmds.isEmpty()) {
                 IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), System.in,
