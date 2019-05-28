@@ -276,9 +276,10 @@ public class TelnetConsole {
             }
             
             //zjd test telnet client
-            Thread.sleep(1000*10);
+            Thread.sleep(1000*30);
             System.out.println("test help commond from TelnetConsole, start");
             telnet.getOutputStream().write("help".getBytes());
+            telnet.getOutputStream().flush();
             System.out.println("test help commond from TelnetConsole, end");
 
             if (cmds.isEmpty()) {
