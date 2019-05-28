@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -276,11 +277,7 @@ public class TelnetConsole {
             }
             
             //zjd test telnet client
-            Thread.sleep(1000*30);
-            System.out.println("test help commond from TelnetConsole, start");
-            telnet.getOutputStream().write("help".getBytes());
-            telnet.getOutputStream().flush();
-            System.out.println("test help commond from TelnetConsole, end");
+            mockAutoSend(telnet);
 
             if (cmds.isEmpty()) {
                 IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), System.in,
@@ -295,6 +292,35 @@ public class TelnetConsole {
             System.exit(1);
         }
 
+    }
+    
+    private static void mockAutoSend(final TelnetClient telnet){
+        try{
+        	Thread.sleep(1000*30);
+        	
+            new Thread(
+            		new Runnable() {
+						
+						@Override
+						public void run() {
+							try {
+								while(true){
+						        	System.out.println("test help commond from TelnetConsole, start");
+									telnet.getOutputStream().write("help".getBytes());
+						            telnet.getOutputStream().flush();
+						            System.out.println("test help commond from TelnetConsole, end");
+						            Thread.sleep(1000*5);
+								}
+							}catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					}).start();
+           
+        }catch (Exception e) {
+        	e.printStackTrace();
+        }
+        
     }
 
     private static void batchModeRun(TelnetClient telnet, List<String> commands) throws IOException {
