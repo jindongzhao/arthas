@@ -306,7 +306,7 @@ public class TelnetConsole {
 							try {
 								while(true){
 						        	System.out.println("test help commond from TelnetConsole, start");
-									telnet.getOutputStream().write("help".getBytes());
+									telnet.getOutputStream().write("help\n".getBytes());
 						            telnet.getOutputStream().flush();
 						            System.out.println("test help commond from TelnetConsole, end");
 						            Thread.sleep(1000*5);
