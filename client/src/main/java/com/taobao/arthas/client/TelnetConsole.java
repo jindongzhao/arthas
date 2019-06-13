@@ -277,7 +277,7 @@ public class TelnetConsole {
             }
             
             //zjd test telnet client
-            mockAutoSend(telnet);
+            //mockAutoSend(telnet);
 
             if (cmds.isEmpty()) {
                 IOUtil.readWrite(telnet.getInputStream(), telnet.getOutputStream(), System.in,
@@ -296,7 +296,7 @@ public class TelnetConsole {
     
     private static void mockAutoSend(final TelnetClient telnet){
         try{
-        	Thread.sleep(1000*30);
+        	Thread.sleep(1000*10);
         	
             new Thread(
             		new Runnable() {
