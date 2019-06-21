@@ -185,6 +185,21 @@ public class ZeusStarter {
 	}
 
 	public static void main(String[] args) {
-		System.out.println(new Random().nextInt(2));
+		InetAddress addr = null;
+		try {
+			addr = InetAddress.getLocalHost();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+
+		byte[] ipAddr = addr.getAddress();
+		String ipAddrStr = "";
+		for (int i = 0; i < ipAddr.length; i++) {
+			if (i > 0) {
+				ipAddrStr += ".";
+			}
+			ipAddrStr += ipAddr[i] & 0xFF;
+		}
+		System.out.println(ipAddrStr.toString());
 	}
 }
