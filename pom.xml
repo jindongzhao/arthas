@@ -62,11 +62,10 @@
         <module>client</module>
         <module>memorycompiler</module>
         <module>boot</module>
-        <module>demo</module>
-        <module>testcase</module>
         <module>site</module>
-        <module>packaging</module>
-    </modules>
+        <module>dependency</module>
+        <module>zeustest</module>
+  </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -256,4 +255,34 @@
             </plugin>
         </plugins>
     </build>
+    
+    <repositories>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>libs-releases</id>
+			<url>http://mvn.hz.netease.com/artifactory/libs-releases</url>
+		</repository>
+		<repository>
+			<id>libs-snapshots</id>
+			<url>http://mvn.hz.netease.com/artifactory/libs-snapshots</url>
+			<snapshots>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+	
+	<distributionManagement>
+        <repository>
+            <id>libs-releases</id>
+            <name>NetEase Maven Repository</name>
+            <url>http://mvn.hz.netease.com/artifactory/libs-releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>libs-snapshots</id>
+            <name>NetEase Maven Repository-snapshots</name>
+            <url>http://mvn.hz.netease.com/artifactory/libs-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
