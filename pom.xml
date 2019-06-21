@@ -64,7 +64,6 @@
         <module>boot</module>
         <module>site</module>
         <module>dependency</module>
-        <module>zeustest</module>
   </modules>
 
     <properties>
