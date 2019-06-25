@@ -58,7 +58,7 @@ public class ZeusStarter {
 							doCommand(respDto.getCommandList());
 						}
 
-						Thread.sleep(500);
+						Thread.sleep(1000);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -145,9 +145,9 @@ public class ZeusStarter {
 
 	private String getAppCmd() {
 		// TODO MOCK
-		return "java -jar app.jar" + " "+new Random().nextInt(2);
+		//return "java -jar app.jar" + " "+new Random().nextInt(2);
 
-		/*BufferedReader br = null;
+		BufferedReader br = null;
 		try {
 			String cmd = "ps aux | grep " + getCurrentPid();
 			Process p = Runtime.getRuntime().exec(cmd);
@@ -169,7 +169,7 @@ public class ZeusStarter {
 				}
 			}
 		}
-		return null;*/
+		return null;
 
 	}
 
