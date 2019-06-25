@@ -144,33 +144,33 @@ public class ZeusStarter {
 	}
 
 	private String getAppCmd() {
-		// TODO MOCK
-		//return "java -jar app.jar" + " "+new Random().nextInt(2);
-
-		BufferedReader br = null;
-		try {
-			String cmd = "ps aux | grep " + getCurrentPid();
-			Process p = Runtime.getRuntime().exec(cmd);
-			br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			String line = null;
-			StringBuilder sb = new StringBuilder();
-			while ((line = br.readLine()) != null) {
-				sb.append(line + "\n");
-			}
-			return sb.toString();
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (Exception e) {
-					e.printStackTrace();
+		if(isWindowsOs()) {
+			return "java -jar app.jar" + " "+new Random().nextInt(2);
+		}else {
+			BufferedReader br = null;
+			try {
+				String cmd = "ps aux | grep " + getCurrentPid();
+				Process p = Runtime.getRuntime().exec(cmd);
+				br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				String line = null;
+				StringBuilder sb = new StringBuilder();
+				while ((line = br.readLine()) != null) {
+					sb.append(line + "\n");
+				}
+				return sb.toString();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (br != null) {
+					try {
+						br.close();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 				}
 			}
+			return null;
 		}
-		return null;
-
 	}
 
 	private void doCommand(List<String> commandList) {
@@ -201,5 +201,10 @@ public class ZeusStarter {
 			ipAddrStr += ipAddr[i] & 0xFF;
 		}
 		System.out.println(ipAddrStr.toString());
+	}
+	
+	private static boolean isWindowsOs() {
+		String os = System.getProperty("os.name");  
+		return os.toLowerCase().startsWith("win"); 
 	}
 }
