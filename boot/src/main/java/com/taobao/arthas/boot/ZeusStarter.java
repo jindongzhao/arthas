@@ -79,11 +79,16 @@ public class ZeusStarter {
 	 *             zhaojindong @date: 14 Jun 2019 18:05:29
 	 */
 	public void doAttach() {
+		
+		String coreJarPath = "/home/zhaojindong/arthas/zeustest/target/zeustest-1.0.0-SNAPSHOT.jar!/BOOT-INF/lib/arthas-core-3.1.1-SNAPSHOT.jar";
+		String agentJarPath = "/home/zhaojindong/arthas/zeustest/target/zeustest-1.0.0-SNAPSHOT.jar!/BOOT-INF/lib/arthas-agent-3.1.1-SNAPSHOT.jar";
+	
 		// classPath
 		List<String> attachArgs = new ArrayList<String>();
 
 		attachArgs.add("-jar");
-		attachArgs.add(getJarFilePath(Arthas.class));
+		//attachArgs.add(getJarFilePath(Arthas.class));
+		attachArgs.add(coreJarPath);
 
 		attachArgs.add("-pid");
 		Integer pid = getCurrentPid();
@@ -99,10 +104,12 @@ public class ZeusStarter {
 		attachArgs.add("" + DEFAULT_HTTP_PORT);
 
 		attachArgs.add("-core");
-		attachArgs.add(getJarFilePath(Arthas.class));
+		//attachArgs.add(getJarFilePath(Arthas.class));
+		attachArgs.add(coreJarPath);
 
 		attachArgs.add("-agent");
-		attachArgs.add(getJarFilePath(AgentBootstrap.class));
+		//attachArgs.add(getJarFilePath(AgentBootstrap.class));
+		attachArgs.add(agentJarPath);
 
 		attachArgs.add("-session-timeout");
 		attachArgs.add("" + DEFAULT_SESSION_TIMEOUT_SECONDS);
