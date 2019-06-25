@@ -110,13 +110,16 @@ public class ZeusStarter {
 		AnsiLog.debug("Start attach. args: " + attachArgs);
 
 		// zjd 启动arthas进程
+		System.out.println("执行attach,参数:"+JSON.toJSONString(attachArgs));
 		ProcessUtils.startArthasCore(pid, attachArgs);
 
 		AnsiLog.info("finish attach.", pid);
 	}
 
 	private String getJarFilePath(Class clazz) {
-		return new File(clazz.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath();
+		String jarPath = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
+		//return new File(clazz.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath();
+		return jarPath;
 	}
 
 	private Integer getCurrentPid() {
