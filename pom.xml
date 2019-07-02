@@ -59,11 +59,9 @@
         <module>common</module>
         <module>core</module>
         <module>agent</module>
-        <module>client</module>
         <module>memorycompiler</module>
         <module>boot</module>
         <module>site</module>
-        <module>dependency</module>
   </modules>
 
     <properties>

@@ -12,12 +12,10 @@ import java.util.List;
 import java.util.Random;
 
 import com.alibaba.fastjson.JSON;
-import com.taobao.arthas.agent.AgentBootstrap;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.HttpUtils;
 import com.taobao.arthas.common.dto.HeartBeatReqDto;
 import com.taobao.arthas.common.dto.HeartBeatRespDto;
-import com.taobao.arthas.core.Arthas;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 
 /**
@@ -35,13 +33,43 @@ public class ZeusStarter {
 
 	private final String URL_BASE = "http://127.0.0.1:8080";
 	private final String URL_HEART_BEAT = URL_BASE + "/heartBeat/isAlive";
-
-	// 启动线程，建立心跳连接
-	public void init() {
+	
+	private final String JAR_URL_BASE = "http://mvn.hz.netease.com/artifactory/libs-snapshots/com/taobao/arthas/";
+	private final String JAR_URL_AGENT = JAR_URL_BASE + "arthas-agent/3.1.1-SNAPSHOT/arthas-agent-3.1.1-20190702.070615-5.jar";
+	private final String JAR_URL_CORE = JAR_URL_BASE + "arthas-core/3.1.1-SNAPSHOT/arthas-core-3.1.1-20190702.070830-4.jar";
+	private final String JAR_URL_SPY = JAR_URL_BASE + "arthas-spy/3.1.1-SNAPSHOT/arthas-spy-3.1.1-20190619.095949-2.jar";
+	
+	private String zeusPath = System.getProperty("user.home");
+	private String jarPathAgent;
+	private String jarPathCore;
+	private String jarPathSpy;
+	
+	public static void main(String[] args) {
+		ZeusStarter zeusStarter = new ZeusStarter();
+		zeusStarter.init("3.1.1");
+	}
+	
+	/**
+	 * 启动线程
+	* @Description 
+	* @param zeusVersion 版本号
+	* @return 
+	* @throws 
+	* @author: zhaojindong  @date: 2 Jul 2019 11:44:11
+	 */
+	public void init(final String zeusVersion) {
 		Thread zeusThread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
+				zeusPath = zeusPath + "/zeus/"+zeusVersion+"/";
+				jarPathAgent = zeusPath+"arthas-agent.jar";
+				jarPathCore = zeusPath + "arthas-core.jar";
+				jarPathSpy = zeusPath + "arthas-spy.jar";
+				
+				//下载zeus需要的jar到user.home下
+				downloadJars();
+				
 				while (true) {
 					try {
 						HeartBeatReqDto reqDto = new HeartBeatReqDto();
@@ -79,16 +107,11 @@ public class ZeusStarter {
 	 *             zhaojindong @date: 14 Jun 2019 18:05:29
 	 */
 	public void doAttach() {
-		
-		String coreJarPath = "/home/zhaojindong/arthas/zeustest/target/zeustest-1.0.0-SNAPSHOT.jar!/BOOT-INF/lib/arthas-core-3.1.1-SNAPSHOT.jar";
-		String agentJarPath = "/home/zhaojindong/arthas/zeustest/target/zeustest-1.0.0-SNAPSHOT.jar!/BOOT-INF/lib/arthas-agent-3.1.1-SNAPSHOT.jar";
-	
 		// classPath
 		List<String> attachArgs = new ArrayList<String>();
 
 		attachArgs.add("-jar");
-		//attachArgs.add(getJarFilePath(Arthas.class));
-		attachArgs.add(coreJarPath);
+		attachArgs.add(new File(jarPathCore).getAbsolutePath());
 
 		attachArgs.add("-pid");
 		Integer pid = getCurrentPid();
@@ -104,12 +127,10 @@ public class ZeusStarter {
 		attachArgs.add("" + DEFAULT_HTTP_PORT);
 
 		attachArgs.add("-core");
-		//attachArgs.add(getJarFilePath(Arthas.class));
-		attachArgs.add(coreJarPath);
+		attachArgs.add(new File(jarPathCore).getAbsolutePath());
 
 		attachArgs.add("-agent");
-		//attachArgs.add(getJarFilePath(AgentBootstrap.class));
-		attachArgs.add(agentJarPath);
+		attachArgs.add(new File(jarPathAgent).getAbsolutePath());
 
 		attachArgs.add("-session-timeout");
 		attachArgs.add("" + DEFAULT_SESSION_TIMEOUT_SECONDS);
@@ -121,12 +142,6 @@ public class ZeusStarter {
 		ProcessUtils.startArthasCore(pid, attachArgs);
 
 		AnsiLog.info("finish attach.", pid);
-	}
-
-	private String getJarFilePath(Class clazz) {
-		String jarPath = clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
-		//return new File(clazz.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath();
-		return jarPath;
 	}
 
 	private Integer getCurrentPid() {
@@ -193,28 +208,31 @@ public class ZeusStarter {
 			}
 		}
 	}
-
-	public static void main(String[] args) {
-		InetAddress addr = null;
-		try {
-			addr = InetAddress.getLocalHost();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
+	
+	/**
+	 * 下载attach需要的jar，存放在user.home目录下
+	* @Description 
+	* @param 
+	* @return 
+	* @throws 
+	* @author: zhaojindong  @date: 2 Jul 2019 11:55:23
+	 */
+	private void downloadJars() {
+		//判断文件是否存在
+		File zeusDir = new File(zeusPath);
+		if(!zeusDir.exists()) {
+			zeusDir.mkdirs();
 		}
-
-		byte[] ipAddr = addr.getAddress();
-		String ipAddrStr = "";
-		for (int i = 0; i < ipAddr.length; i++) {
-			if (i > 0) {
-				ipAddrStr += ".";
-			}
-			ipAddrStr += ipAddr[i] & 0xFF;
-		}
-		System.out.println(ipAddrStr.toString());
+		
+		//下载jar
+		HttpUtils.downloadFile(JAR_URL_AGENT, jarPathAgent);
+		HttpUtils.downloadFile(JAR_URL_CORE, jarPathCore);
+		HttpUtils.downloadFile(JAR_URL_SPY, jarPathSpy);
 	}
 	
 	private static boolean isWindowsOs() {
 		String os = System.getProperty("os.name");  
 		return os.toLowerCase().startsWith("win"); 
 	}
+
 }

@@ -1,15 +1,23 @@
 package com.taobao.arthas.common;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.common.dto.HeartBeatReqDto;
@@ -201,10 +209,46 @@ public class HttpUtils {
 		return str == null || str.trim().length() == 0 || "null".equals(str);
 	}
 
+	/**
+	 * 下载文件
+	* @Description 
+	* @param 
+	* @return 
+	* @throws 
+	* @author: zhaojindong  @date: 2 Jul 2019 11:35:02
+	 */
+	public static void downloadFile(String fileUrl, String localFilePath) {
+		try {
+			URL url = new URL(fileUrl);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.connect();
+
+			// 写盘
+			RandomAccessFile file = new RandomAccessFile(localFilePath, "rw");
+			InputStream stream = conn.getInputStream();
+			byte buffer[] = new byte[1024];
+			while (true) {
+				int len = stream.read(buffer);
+				if (len == -1) {
+					break;
+				}
+				file.write(buffer, 0, len);
+			}
+			if (file != null) {
+				file.close();
+			}
+			if (stream != null) {
+				stream.close();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String[] arg) {
-		HeartBeatReqDto reqDto = new HeartBeatReqDto();
-		reqDto.setAppIp("127.0.0.1");
-		reqDto.setAppStartCmd("java -jar abc.jar");
-		System.out.println(convertHttpPostParam(reqDto));
+		System.out.println(System.getProperty("user.home"));
+		
+		downloadFile("http://mvn.hz.netease.com/artifactory/libs-snapshots/com/netease/edu/k12/k12-ms-autojudge-common/0.0.1-SNAPSHOT"
+				+ "/k12-ms-autojudge-common-0.0.1-20181029.072221-1.jar", "C:/tmp/zjd/k12-ms-autojudge-common.jar");
 	}
 }
