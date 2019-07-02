@@ -33,43 +33,45 @@ public class ZeusStarter {
 
 	private final String URL_BASE = "http://127.0.0.1:8080";
 	private final String URL_HEART_BEAT = URL_BASE + "/heartBeat/isAlive";
-	
+
 	private final String JAR_URL_BASE = "https://github.com/jindongzhao/arthas/blob/zeus/lib/3.1.1/";
 	private final String JAR_URL_AGENT = JAR_URL_BASE + "arthas-agent-3.1.1.jar";
 	private final String JAR_URL_CORE = JAR_URL_BASE + "arthas-core-3.1.1.jar";
 	private final String JAR_URL_SPY = JAR_URL_BASE + "arthas-spy-3.1.1.jar";
-	
+
 	private String zeusPath = System.getProperty("user.home");
 	private String jarPathAgent;
 	private String jarPathCore;
 	private String jarPathSpy;
-	
+
 	public static void main(String[] args) {
 		ZeusStarter zeusStarter = new ZeusStarter();
 		zeusStarter.init("3.1.1");
 	}
-	
+
 	/**
 	 * 启动线程
-	* @Description 
-	* @param zeusVersion 版本号
-	* @return 
-	* @throws 
-	* @author: zhaojindong  @date: 2 Jul 2019 11:44:11
+	 * 
+	 * @Description
+	 * @param zeusVersion
+	 *            版本号
+	 * @return
+	 * @throws @author:
+	 *             zhaojindong @date: 2 Jul 2019 11:44:11
 	 */
 	public void init(final String zeusVersion) {
 		Thread zeusThread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				zeusPath = zeusPath + "/zeus/"+zeusVersion+"/";
-				jarPathAgent = zeusPath+"arthas-agent.jar";
+				zeusPath = zeusPath + "/zeus/" + zeusVersion + "/";
+				jarPathAgent = zeusPath + "arthas-agent.jar";
 				jarPathCore = zeusPath + "arthas-core.jar";
 				jarPathSpy = zeusPath + "arthas-spy.jar";
-				
-				//下载zeus需要的jar到user.home下
+
+				// 下载zeus需要的jar到user.home下
 				downloadJars();
-				
+
 				while (true) {
 					try {
 						HeartBeatReqDto reqDto = new HeartBeatReqDto();
@@ -138,7 +140,7 @@ public class ZeusStarter {
 		AnsiLog.debug("Start attach. args: " + attachArgs);
 
 		// zjd 启动arthas进程
-		System.out.println("执行attach,参数:"+JSON.toJSONString(attachArgs));
+		System.out.println("执行attach,参数:" + JSON.toJSONString(attachArgs));
 		ProcessUtils.startArthasCore(pid, attachArgs);
 
 		AnsiLog.info("finish attach.", pid);
@@ -169,9 +171,9 @@ public class ZeusStarter {
 	}
 
 	private String getAppCmd() {
-		if(isWindowsOs()) {
-			return "java -jar app.jar" + " "+new Random().nextInt(2);
-		}else {
+		if (isWindowsOs()) {
+			return "java -jar app.jar" + " " + new Random().nextInt(2);
+		} else {
 			BufferedReader br = null;
 			try {
 				String cmd = "ps aux | grep " + getCurrentPid();
@@ -199,7 +201,7 @@ public class ZeusStarter {
 	}
 
 	private void doCommand(List<String> commandList) {
-		for(String command : commandList) {
+		for (String command : commandList) {
 			if (command.equals("attach")) {
 				// TODO attach 之后，需要通知manager
 				System.out.println("do attach...");
@@ -208,31 +210,42 @@ public class ZeusStarter {
 			}
 		}
 	}
-	
+
 	/**
 	 * 下载attach需要的jar，存放在user.home目录下
-	* @Description 
-	* @param 
-	* @return 
-	* @throws 
-	* @author: zhaojindong  @date: 2 Jul 2019 11:55:23
+	 * 
+	 * @Description
+	 * @param
+	 * @return
+	 * @throws @author:
+	 *             zhaojindong @date: 2 Jul 2019 11:55:23
 	 */
 	private void downloadJars() {
-		//判断文件是否存在
+		// 判断文件是否存在
 		File zeusDir = new File(zeusPath);
-		if(!zeusDir.exists()) {
+		if (!zeusDir.exists()) {
 			zeusDir.mkdirs();
 
-			//下载jar
-			HttpUtils.downloadFile(JAR_URL_AGENT, jarPathAgent);
-			HttpUtils.downloadFile(JAR_URL_CORE, jarPathCore);
-			HttpUtils.downloadFile(JAR_URL_SPY, jarPathSpy);
+			// 下载jar
+			try {
+				DownloadUtils.saveUrl(jarPathAgent, JAR_URL_AGENT, true);
+				DownloadUtils.saveUrl(jarPathCore, JAR_URL_CORE, true);
+				DownloadUtils.saveUrl(jarPathSpy, JAR_URL_SPY, true);
+
+				/*
+				 * HttpUtils.downloadFile(JAR_URL_AGENT, jarPathAgent);
+				 * HttpUtils.downloadFile(JAR_URL_CORE, jarPathCore);
+				 * HttpUtils.downloadFile(JAR_URL_SPY, jarPathSpy);
+				 */
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
-	
+
 	private static boolean isWindowsOs() {
-		String os = System.getProperty("os.name");  
-		return os.toLowerCase().startsWith("win"); 
+		String os = System.getProperty("os.name");
+		return os.toLowerCase().startsWith("win");
 	}
 
 }
