@@ -34,10 +34,10 @@ public class ZeusStarter {
 	private final String URL_BASE = "http://127.0.0.1:8080";
 	private final String URL_HEART_BEAT = URL_BASE + "/heartBeat/isAlive";
 	
-	private final String JAR_URL_BASE = "http://mvn.hz.netease.com/artifactory/libs-snapshots/com/taobao/arthas/";
-	private final String JAR_URL_AGENT = JAR_URL_BASE + "arthas-agent/3.1.1-SNAPSHOT/arthas-agent-3.1.1-20190702.070615-5.jar";
-	private final String JAR_URL_CORE = JAR_URL_BASE + "arthas-core/3.1.1-SNAPSHOT/arthas-core-3.1.1-20190702.070830-4.jar";
-	private final String JAR_URL_SPY = JAR_URL_BASE + "arthas-spy/3.1.1-SNAPSHOT/arthas-spy-3.1.1-20190619.095949-2.jar";
+	private final String JAR_URL_BASE = "https://github.com/jindongzhao/arthas/blob/zeus/lib/3.1.1/";
+	private final String JAR_URL_AGENT = JAR_URL_BASE + "arthas-agent-3.1.1.jar";
+	private final String JAR_URL_CORE = JAR_URL_BASE + "arthas-core-3.1.1.jar";
+	private final String JAR_URL_SPY = JAR_URL_BASE + "arthas-spy-3.1.1.jar";
 	
 	private String zeusPath = System.getProperty("user.home");
 	private String jarPathAgent;
