@@ -222,12 +222,12 @@ public class ZeusStarter {
 		File zeusDir = new File(zeusPath);
 		if(!zeusDir.exists()) {
 			zeusDir.mkdirs();
+
+			//下载jar
+			HttpUtils.downloadFile(JAR_URL_AGENT, jarPathAgent);
+			HttpUtils.downloadFile(JAR_URL_CORE, jarPathCore);
+			HttpUtils.downloadFile(JAR_URL_SPY, jarPathSpy);
 		}
-		
-		//下载jar
-		HttpUtils.downloadFile(JAR_URL_AGENT, jarPathAgent);
-		HttpUtils.downloadFile(JAR_URL_CORE, jarPathCore);
-		HttpUtils.downloadFile(JAR_URL_SPY, jarPathSpy);
 	}
 	
 	private static boolean isWindowsOs() {
