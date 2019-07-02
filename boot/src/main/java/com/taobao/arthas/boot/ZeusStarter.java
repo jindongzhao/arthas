@@ -35,9 +35,9 @@ public class ZeusStarter {
 	private final String URL_HEART_BEAT = URL_BASE + "/heartBeat/isAlive";
 
 	private final String JAR_URL_BASE = "https://github.com/jindongzhao/arthas/blob/zeus/lib/3.1.1/";
-	private final String JAR_URL_AGENT = JAR_URL_BASE + "arthas-agent-3.1.1.jar";
-	private final String JAR_URL_CORE = JAR_URL_BASE + "arthas-core-3.1.1.jar";
-	private final String JAR_URL_SPY = JAR_URL_BASE + "arthas-spy-3.1.1.jar";
+	private final String JAR_URL_AGENT = JAR_URL_BASE + "arthas-agent-3.1.1.jar?raw=true";
+	private final String JAR_URL_CORE = JAR_URL_BASE + "arthas-core-3.1.1.jar?raw=true";
+	private final String JAR_URL_SPY = JAR_URL_BASE + "arthas-spy-3.1.1.jar?raw=true";
 
 	private String zeusPath = System.getProperty("user.home");
 	private String jarPathAgent;
