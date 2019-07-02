@@ -248,7 +248,7 @@ public class HttpUtils {
 	public static void main(String[] arg) {
 		System.out.println(System.getProperty("user.home"));
 		
-		downloadFile("http://mvn.hz.netease.com/artifactory/libs-snapshots/com/netease/edu/k12/k12-ms-autojudge-common/0.0.1-SNAPSHOT"
-				+ "/k12-ms-autojudge-common-0.0.1-20181029.072221-1.jar", "C:/tmp/zjd/k12-ms-autojudge-common.jar");
+		downloadFile("http://mvn.hz.netease.com/artifactory/libs-snapshots/com/taobao/arthas/"
+				+ "arthas-agent/3.1.1-SNAPSHOT/arthas-agent-3.1.1-20190702.070615-5.jar", "C:/tmp/zjd/arthas-agent.jar");
 	}
 }
