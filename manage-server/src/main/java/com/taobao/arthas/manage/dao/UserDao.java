@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 
 import com.taobao.arthas.manage.dao.domain.User;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public interface UserDao extends JpaRepository<User, Long> {
@@ -85,7 +84,7 @@ public interface UserDao extends JpaRepository<User, Long> {
 	 * @param date
 	 * @return
 	 */
-	List<User> findByDateOfBirth(@Param("date") LocalDate date);
+	/*List<User> findByDateOfBirth(@Param("date") LocalDate date);*/
 
 	/**
 	 * find all users
