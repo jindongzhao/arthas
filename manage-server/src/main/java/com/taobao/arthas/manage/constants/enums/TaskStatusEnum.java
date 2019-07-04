@@ -1,4 +1,4 @@
-package com.taobao.arthas.manage.enums;
+package com.taobao.arthas.manage.constants.enums;
 
 public enum TaskStatusEnum {
 	INIT(0,"初始化状态"),

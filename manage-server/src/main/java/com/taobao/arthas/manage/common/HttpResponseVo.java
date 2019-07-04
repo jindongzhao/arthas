@@ -1,6 +1,6 @@
-package com.taobao.arthas.manage.bo;
+package com.taobao.arthas.manage.common;
 
-import com.taobao.arthas.manage.enums.ResponseResultEnum;
+import com.taobao.arthas.manage.constants.enums.ResponseResultEnum;
 
 public class HttpResponseVo {
 	private Integer code;

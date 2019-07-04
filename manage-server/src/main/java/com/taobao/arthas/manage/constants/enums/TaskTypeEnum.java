@@ -1,4 +1,4 @@
-package com.taobao.arthas.manage.enums;
+package com.taobao.arthas.manage.constants.enums;
 
 public enum TaskTypeEnum {
 	ATTACH("attach","attach到目标jvm进程");
