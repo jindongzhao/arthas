@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.alibaba.fastjson.JSON;
+import com.taobao.arthas.common.ManageRespsCodeEnum;
+import com.taobao.arthas.common.ManageRpcCommandEnum;
+import com.taobao.arthas.common.ManageRpcUtil;
+import com.taobao.arthas.common.dto.HeartBeatReqDto;
 import com.taobao.arthas.common.dto.HeartBeatRespDto;
-import com.taobao.arthas.manage.common.BizUtil;
-import com.taobao.arthas.manage.constants.enums.ResponseResultEnum;
+import com.taobao.arthas.common.dto.ManageTaskDto;
 import com.taobao.arthas.manage.constants.enums.TaskStatusEnum;
 import com.taobao.arthas.manage.constants.enums.TaskTypeEnum;
 import com.taobao.arthas.manage.dao.AppConnectionDao;
@@ -45,35 +47,69 @@ public class HeartBeatController {
 	 */
 	@PostMapping("/heartBeat/isAlive")
 	public String isAlive(@RequestParam(name = "params", required = true) String params) {
-		AppConnectionDo appConnectionDo = JSON.parseObject(params, AppConnectionDo.class);
-		appConnectionDao.save(appConnectionDo);
-
+		HeartBeatReqDto reqDto = ManageRpcUtil.deserializeReqParam(params, HeartBeatReqDto.class);
+		
+		//保存心跳数据
+		AppConnectionDo appDo = saveOrUpdateConnection(reqDto.getAppIp(),reqDto.getPid(),reqDto.getAppStartCmd());
+		
+		// 返回的心跳数据
 		HeartBeatRespDto heartBeatResp = new HeartBeatRespDto();
-		heartBeatResp.setCode(ResponseResultEnum.SUCCESS.getCode());
+		heartBeatResp.setResultCode(ManageRespsCodeEnum.SUCCESS.getCode());
 
 		// 查询需要执行的命令
-		List<String> commandList = new ArrayList<>();
-		String appId = BizUtil.getAppId(appConnectionDo);
-		List<OptTaskDo> taskDoList = optTaskDao.getByAppId(appId);
+		List<ManageTaskDto> taskDtoList = getExcuteTransactionList(appDo.getId());
+		
+		heartBeatResp.setTaskDtoList(taskDtoList);
 
-		if (taskDoList != null) {
-			for (OptTaskDo taskDo : taskDoList) {
-				// 初始化状态的task
-				if (TaskStatusEnum.INIT.getCode().equals(taskDo.getTaskStatusCode())) {
-					// attach命令
-					if (TaskTypeEnum.ATTACH.getCode().equals(taskDo.getTaskTypeCode())) {
-						commandList.add("attach");
-					}
-
-					// 更新命令状态为执行中
-					optTaskDao.updateStatus(taskDo.getId(), TaskStatusEnum.DOING.getCode());
-				}
-			}
-		}
-
-		heartBeatResp.setCommandList(commandList);
-
-		return JSON.toJSONString(heartBeatResp);
+		return ManageRpcUtil.serializeRspsResult(heartBeatResp);
 	}
 
+	private AppConnectionDo saveOrUpdateConnection(String appIp, Integer pid, String appStartCmd) {
+		// 查询客户端是否存在
+		AppConnectionDo appDo = appConnectionDao.getByAppipAndPid(appIp, pid);
+		if (appDo == null) {
+			// 不存在客户端连接，保存连接信息
+			AppConnectionDo appConnectionDo = new AppConnectionDo();
+			appConnectionDo.setAppIp(appIp);
+			appConnectionDo.setPid(pid);
+			appConnectionDo.setAppStartCmd(appStartCmd);
+			appConnectionDo.setLastConnectionTime(System.currentTimeMillis());
+			appConnectionDao.save(appConnectionDo);
+			return appConnectionDo;
+		} else {
+			// 更新心跳连接时间
+			appDo.setLastConnectionTime(System.currentTimeMillis());
+			appConnectionDao.updateConnectionTime(appDo.getId(), System.currentTimeMillis());
+			return appDo;
+		}
+	}
+	
+	/**
+	 * 根据app connectionId 查询需要执行的事务
+	* @Description 
+	* @param 
+	* @return 
+	* @throws 
+	* @author: zhaojindong  @date: 15 Jul 2019 22:38:10
+	 */
+	private List<ManageTaskDto> getExcuteTransactionList(Long connId){
+		List<ManageTaskDto> taskList = new ArrayList<>();
+		List<OptTaskDo> initTaskList = optTaskDao.getByConnectionIdAndStatus(connId,TaskStatusEnum.INIT.getCode());
+		
+		if (initTaskList != null) {
+			for (OptTaskDo taskDo : initTaskList) {
+				// attach命令
+				if (TaskTypeEnum.ATTACH.getCode().equals(taskDo.getTaskTypeCode())) {
+					ManageTaskDto txDto = new ManageTaskDto();
+					txDto.setTaskId(taskDo.getId());
+					txDto.setCommand(ManageRpcCommandEnum.COMMAND_ATTACH.getCode());
+					taskList.add(txDto);
+				}
+
+				// 更新命令状态为执行中
+				optTaskDao.updateStatus(taskDo.getId(), TaskStatusEnum.DOING.getCode());
+			}
+		}
+		return taskList;
+	}
 }

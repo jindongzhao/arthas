@@ -13,9 +13,12 @@ import java.util.Random;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.common.AnsiLog;
-import com.taobao.arthas.common.HttpUtils;
+import com.taobao.arthas.common.ManageRespsCodeEnum;
+import com.taobao.arthas.common.ManageRpcCommandEnum;
+import com.taobao.arthas.common.ManageRpcUtil;
 import com.taobao.arthas.common.dto.HeartBeatReqDto;
 import com.taobao.arthas.common.dto.HeartBeatRespDto;
+import com.taobao.arthas.common.dto.ManageTaskDto;
 import com.taobao.arthas.core.shell.ShellServerOptions;
 
 /**
@@ -76,16 +79,19 @@ public class ZeusStarter {
 					try {
 						HeartBeatReqDto reqDto = new HeartBeatReqDto();
 						reqDto.setAppIp(getAppIp());
+						reqDto.setPid(getCurrentPid());
 						reqDto.setAppStartCmd(getAppCmd());
 
-						System.out.println("发送心跳");
-						String heartBeatResp = HttpUtils.doPost(URL_HEART_BEAT, HttpUtils.generateRequestParam(reqDto));
-						HeartBeatRespDto respDto = JSON.parseObject(heartBeatResp, HeartBeatRespDto.class);
-						System.out.println("收到心跳反馈：" + JSON.toJSONString(respDto));
+						System.out.println("heartbeating...");
+						HeartBeatRespDto respDto = ManageRpcUtil.sendRManageRequest(URL_HEART_BEAT, reqDto, HeartBeatRespDto.class);
+						System.out.println("heartbeating echo:" + JSON.toJSONString(respDto));
 
-						// 带有执行命令
-						if (respDto.getCommandList() != null) {
-							doCommand(respDto.getCommandList());
+						// 心跳返回结果中带有事务，执行
+						if (ManageRespsCodeEnum.SUCCESS.getCode().equals(respDto.getResultCode())
+								&& respDto.getTaskDtoList() != null) {
+							for(ManageTaskDto txDto : respDto.getTaskDtoList()) {
+								processTx(txDto);
+							}
 						}
 
 						Thread.sleep(1000);
@@ -98,9 +104,26 @@ public class ZeusStarter {
 		zeusThread.setName("Zeus-heart-beating-thread");
 		zeusThread.start();
 	}
+	
+	/**
+	 * 执行事务
+	* @Description 
+	* @param 
+	* @return 
+	* @throws 
+	* @author: zhaojindong  @date: 15 Jul 2019 20:45:23
+	 */
+	private void processTx(ManageTaskDto transactionDto) {
+		if (transactionDto.getCommand().equals(ManageRpcCommandEnum.COMMAND_ATTACH.getCode())) {
+			// TODO attach 之后，需要通知manager
+			System.out.println("do attach...");
+			doAttachCommand();
+			return;
+		}
+	}
 
 	/**
-	 * 执行attach
+	 * 执行attach命令
 	 * 
 	 * @Description
 	 * @param
@@ -108,7 +131,7 @@ public class ZeusStarter {
 	 * @throws @author:
 	 *             zhaojindong @date: 14 Jun 2019 18:05:29
 	 */
-	public void doAttach() {
+	public void doAttachCommand() {
 		// classPath
 		List<String> attachArgs = new ArrayList<String>();
 
@@ -176,7 +199,7 @@ public class ZeusStarter {
 		} else {
 			BufferedReader br = null;
 			try {
-				String cmd = "ps aux | grep " + getCurrentPid();
+				String cmd = "ps -x -p " + getCurrentPid();
 				Process p = Runtime.getRuntime().exec(cmd);
 				br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				String line = null;
@@ -197,17 +220,6 @@ public class ZeusStarter {
 				}
 			}
 			return null;
-		}
-	}
-
-	private void doCommand(List<String> commandList) {
-		for (String command : commandList) {
-			if (command.equals("attach")) {
-				// TODO attach 之后，需要通知manager
-				System.out.println("do attach...");
-				doAttach();
-				return;
-			}
 		}
 	}
 

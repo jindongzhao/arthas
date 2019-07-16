@@ -16,20 +16,35 @@ public class OptTaskDo extends BaseDo{
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
+	/**
+	 * 任务code
+	 */
 	@Column(nullable = true)
 	private String taskTypeCode;
 	
+	/**
+	 * 任务参数
+	 */
 	@Column(nullable = true)
 	private String taskParam;
 	
+	/**
+	 * 任务状态code
+	 */
 	@Column(nullable = true)
 	private Integer taskStatusCode;
 	
+	/**
+	 * 父任务id
+	 */
 	@Column(nullable = true)
 	private Long parentTaskId;
 	
+	/**
+	 * 需要执行任务的app id
+	 */
 	@Column(nullable = true)
-	private String appId;
+	private Long appConnectionId;
 
 	public String getTaskTypeCode() {
 		return taskTypeCode;
@@ -63,12 +78,12 @@ public class OptTaskDo extends BaseDo{
 		this.parentTaskId = parentTaskId;
 	}
 
-	public String getAppId() {
-		return appId;
+	public Long getAppConnectionId() {
+		return appConnectionId;
 	}
 
-	public void setAppId(String appId) {
-		this.appId = appId;
+	public void setAppConnectionId(Long appConnectionId) {
+		this.appConnectionId = appConnectionId;
 	}
 
 	public Long getId() {

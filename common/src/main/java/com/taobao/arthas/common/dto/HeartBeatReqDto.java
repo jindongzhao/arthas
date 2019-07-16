@@ -7,6 +7,7 @@ package com.taobao.arthas.common.dto;
  */
 public class HeartBeatReqDto {
 	public String appIp;
+	private Integer pid;
 	public String appStartCmd;
 	
 	public String getAppIp() {
@@ -21,5 +22,12 @@ public class HeartBeatReqDto {
 	public void setAppStartCmd(String appStartCmd) {
 		this.appStartCmd = appStartCmd;
 	}
+	public Integer getPid() {
+		return pid;
+	}
+	public void setPid(Integer pid) {
+		this.pid = pid;
+	}
+	
 	
 }

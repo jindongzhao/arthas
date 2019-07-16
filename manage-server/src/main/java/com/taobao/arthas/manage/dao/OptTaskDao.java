@@ -11,10 +11,11 @@ import com.taobao.arthas.manage.dao.domain.OptTaskDo;
 
 public interface OptTaskDao extends JpaRepository<OptTaskDo, Long> {
 
-	List<OptTaskDo> getByAppId(@Param("appId") String appId);
+	@Query("select * from OptTaskDo where appConnectionId = :appConnectionId and taskStatusCode = :taskStatusCode")
+	List<OptTaskDo> getByConnectionIdAndStatus(@Param("appConnectionId") Long appConnectionId, @Param("taskStatusCode") Integer taskStatusCode);
 	
 	@Modifying
-	@Query("update OptTaskDo set taskStatusCode = ?2 where id = ?1")
-	int updateStatus(Long id, Integer taskStatusCode);
+	@Query("update OptTaskDo set taskStatusCode = :id where id = :taskStatusCode")
+	int updateStatus( @Param("id") Long id, @Param("taskStatusCode")  Integer taskStatusCode);
 
 }

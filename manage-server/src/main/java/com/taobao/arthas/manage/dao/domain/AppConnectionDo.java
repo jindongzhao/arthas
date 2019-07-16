@@ -20,6 +20,9 @@ public class AppConnectionDo extends BaseDo{
 	private String appIp;
 	
 	@Column(nullable = true)
+	private Integer pid;
+	
+	@Column(nullable = true)
 	private String appStartCmd;
 	
 	@Column(nullable = true)
@@ -56,4 +59,13 @@ public class AppConnectionDo extends BaseDo{
 	public void setId(Long id) {
 		this.id = id;
 	}
+
+	public Integer getPid() {
+		return pid;
+	}
+
+	public void setPid(Integer pid) {
+		this.pid = pid;
+	}
+	
 }

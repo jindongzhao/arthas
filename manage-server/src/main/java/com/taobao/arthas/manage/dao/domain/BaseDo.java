@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 
 public class BaseDo implements Serializable{
 	private static final long serialVersionUID = -2162145358751660659L;

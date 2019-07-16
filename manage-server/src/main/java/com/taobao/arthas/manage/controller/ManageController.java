@@ -56,24 +56,24 @@ public class ManageController {
 	 * @throws @author:
 	 *             zhaojindong @date: 20 Jun 2019 14:28:23
 	 */
-	@PostMapping("/manage/doAttach")
-	public String doAttach(@RequestParam(name = "appIdList", required = true) String appIdListStr,
+	@PostMapping("/manage/command/attach")
+	public String doAttach(@RequestParam(name = "connIdList", required = true) String connIdListStr,
 			@RequestParam(name = "loginUserId", required = true) Long loginUserId) {
-		String[] idArr = appIdListStr.split(",");
+		String[] idArr = connIdListStr.split(",");
 
 		// 创建总任务
 		OptTaskDo parentTaskDo = new OptTaskDo();
 		parentTaskDo.setTaskTypeCode(TaskTypeEnum.ATTACH.getCode());
 		parentTaskDo.setTaskStatusCode(TaskStatusEnum.INIT.getCode());
-		parentTaskDo.setTaskParam(appIdListStr);
+		parentTaskDo.setTaskParam(connIdListStr);
 		optTaskDao.save(parentTaskDo);
 
 		// 创建子任务
-		for (String appId : idArr) {
+		for (String connId : idArr) {
 			OptTaskDo subTaskBo = new OptTaskDo();
 			subTaskBo.setTaskTypeCode(TaskTypeEnum.ATTACH.getCode());
 			subTaskBo.setTaskStatusCode(TaskStatusEnum.INIT.getCode());
-			subTaskBo.setAppId(appId);
+			subTaskBo.setAppConnectionId(Long.valueOf(connId));
 			subTaskBo.setParentTaskId(parentTaskDo.getId());
 			optTaskDao.save(subTaskBo);
 		}

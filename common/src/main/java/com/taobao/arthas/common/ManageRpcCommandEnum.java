@@ -1,20 +1,16 @@
-package com.taobao.arthas.manage.constants.enums;
+package com.taobao.arthas.common;
 
-/**
- * manage 页面传递过来的任务类型
- * @author zhaojindong
- *
- */
-public enum TaskTypeEnum {
-	ATTACH("attach","attach到目标jvm进程");
+public enum ManageRpcCommandEnum {
+	COMMAND_ATTACH("COMMAND_ATTACH","attach到目标jvm进程");
 	
-	TaskTypeEnum(String code,String message){
+	ManageRpcCommandEnum(String code,String message){
 		this.code = code;
 		this.message = message;
 	}
 	
 	private String code;
 	private String message;
+	
 	public String getCode() {
 		return code;
 	}

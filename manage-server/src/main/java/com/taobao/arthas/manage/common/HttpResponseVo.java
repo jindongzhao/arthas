@@ -1,6 +1,6 @@
 package com.taobao.arthas.manage.common;
 
-import com.taobao.arthas.manage.constants.enums.ResponseResultEnum;
+import com.taobao.arthas.common.ManageRespsCodeEnum;
 
 public class HttpResponseVo {
 	private Integer code;
@@ -28,16 +28,16 @@ public class HttpResponseVo {
 	
 	public static HttpResponseVo success(Object obj) {
 		HttpResponseVo responseVo = new HttpResponseVo();
-		responseVo.setCode(ResponseResultEnum.SUCCESS.getCode());
-		responseVo.setMessage(ResponseResultEnum.SUCCESS.getMessage());
+		responseVo.setCode(ManageRespsCodeEnum.SUCCESS.getCode());
+		responseVo.setMessage(ManageRespsCodeEnum.SUCCESS.getMessage());
 		responseVo.setResult(obj);
 		return responseVo;
 	}
 	
 	public static HttpResponseVo fail() {
 		HttpResponseVo responseVo = new HttpResponseVo();
-		responseVo.setCode(ResponseResultEnum.FAIL.getCode());
-		responseVo.setMessage(ResponseResultEnum.FAIL.getMessage());
+		responseVo.setCode(ManageRespsCodeEnum.FAIL.getCode());
+		responseVo.setMessage(ManageRespsCodeEnum.FAIL.getMessage());
 		return responseVo;
 	}
 }
