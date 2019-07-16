@@ -52,6 +52,17 @@ public class ZeusStarter {
 		zeusStarter.init("3.1.1");
 	}
 
+	/*
+	 * public static void main(String[] args) { HeartBeatReqDto reqDto = new
+	 * HeartBeatReqDto(); reqDto.setAppIp("11.22.333"); reqDto.setPid(1111);
+	 * reqDto.setAppStartCmd("cccccccccc");
+	 * 
+	 * System.out.println("heartbeating..."); HeartBeatRespDto respDto =
+	 * ManageRpcUtil.sendManageRequest("http://127.0.0.1:8080/heartBeat/isAlive",
+	 * reqDto, HeartBeatRespDto.class); System.out.println("heartbeating echo:" +
+	 * JSON.toJSONString(respDto)); }
+	 */
+
 	/**
 	 * 启动线程
 	 * 
@@ -83,13 +94,13 @@ public class ZeusStarter {
 						reqDto.setAppStartCmd(getAppCmd());
 
 						System.out.println("heartbeating...");
-						HeartBeatRespDto respDto = ManageRpcUtil.sendRManageRequest(URL_HEART_BEAT, reqDto, HeartBeatRespDto.class);
+						HeartBeatRespDto respDto = ManageRpcUtil.sendManageRequest(URL_HEART_BEAT, reqDto, HeartBeatRespDto.class);
 						System.out.println("heartbeating echo:" + JSON.toJSONString(respDto));
 
 						// 心跳返回结果中带有事务，执行
 						if (ManageRespsCodeEnum.SUCCESS.getCode().equals(respDto.getResultCode())
 								&& respDto.getTaskDtoList() != null) {
-							for(ManageTaskDto txDto : respDto.getTaskDtoList()) {
+							for (ManageTaskDto txDto : respDto.getTaskDtoList()) {
 								processTx(txDto);
 							}
 						}
@@ -104,14 +115,15 @@ public class ZeusStarter {
 		zeusThread.setName("Zeus-heart-beating-thread");
 		zeusThread.start();
 	}
-	
+
 	/**
 	 * 执行事务
-	* @Description 
-	* @param 
-	* @return 
-	* @throws 
-	* @author: zhaojindong  @date: 15 Jul 2019 20:45:23
+	 * 
+	 * @Description
+	 * @param
+	 * @return
+	 * @throws @author:
+	 *             zhaojindong @date: 15 Jul 2019 20:45:23
 	 */
 	private void processTx(ManageTaskDto transactionDto) {
 		if (transactionDto.getCommand().equals(ManageRpcCommandEnum.COMMAND_ATTACH.getCode())) {
@@ -199,7 +211,8 @@ public class ZeusStarter {
 		} else {
 			BufferedReader br = null;
 			try {
-				String cmd = "ps -x -p " + getCurrentPid();
+				Integer pid = getCurrentPid();
+				String cmd = "ps -X -p " + pid + " | grep " + pid;
 				Process p = Runtime.getRuntime().exec(cmd);
 				br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 				String line = null;
