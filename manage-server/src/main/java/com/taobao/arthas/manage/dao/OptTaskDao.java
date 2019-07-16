@@ -17,7 +17,7 @@ public interface OptTaskDao extends JpaRepository<OptTaskDo, Long> {
 	
 	@Transactional
 	@Modifying
-	@Query("update OptTaskDo set taskStatusCode = :id where id = :taskStatusCode")
+	@Query("update OptTaskDo set taskStatusCode = :taskStatusCode where id = :id")
 	int updateStatus( @Param("id") Long id, @Param("taskStatusCode")  Integer taskStatusCode);
 
 }
