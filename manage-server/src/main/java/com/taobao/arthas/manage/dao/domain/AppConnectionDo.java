@@ -9,22 +9,22 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "app_connection")
-public class AppConnectionDo extends BaseDo{
+public class AppConnectionDo extends BaseDo {
 	private static final long serialVersionUID = -7928457568748680648L;
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	@Column(nullable = true)
 	private String appIp;
-	
+
 	@Column(nullable = true)
 	private Integer pid;
-	
-	@Column(nullable = true)
+
+	@Column(nullable = true, length = 1024)
 	private String appStartCmd;
-	
+
 	@Column(nullable = true)
 	private Long lastConnectionTime;
 
@@ -67,5 +67,5 @@ public class AppConnectionDo extends BaseDo{
 	public void setPid(Integer pid) {
 		this.pid = pid;
 	}
-	
+
 }
