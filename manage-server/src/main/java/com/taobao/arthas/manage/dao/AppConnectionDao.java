@@ -15,5 +15,5 @@ public interface AppConnectionDao extends JpaRepository<AppConnectionDo, Long> {
 
 	@Modifying
 	@Query("update AppConnectionDo set lastConnectionTime = :time where id = :id")
-	AppConnectionDo updateConnectionTime( @Param("id") Long id,  @Param("time") Long time);
+	void updateConnectionTime( @Param("id") Long id,  @Param("time") Long time);
 }
