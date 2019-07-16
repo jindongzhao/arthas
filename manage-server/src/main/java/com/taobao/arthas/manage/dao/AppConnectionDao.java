@@ -9,7 +9,7 @@ import com.taobao.arthas.manage.dao.domain.AppConnectionDo;
 
 public interface AppConnectionDao extends JpaRepository<AppConnectionDo, Long> {
 	
-	@Query("select * from AppConnectionDo where appIp = :appIp and pid = :pid limit 1")
+	@Query("select a from AppConnectionDo a where appIp = :appIp and pid = :pid")
 	AppConnectionDo getByAppipAndPid(@Param("appIp") String appIp, @Param("pid") Integer pid);
 	
 
