@@ -9,11 +9,11 @@ import com.taobao.arthas.manage.dao.domain.AppConnectionDo;
 
 public interface AppConnectionDao extends JpaRepository<AppConnectionDo, Long> {
 	
-	@Query("select * from AppConnectionDo where appIp = :appId and pid = :pid limit 1")
-	AppConnectionDo getByAppipAndPid(@Param("appId") String appId, @Param("pid") Integer pid);
+	@Query("select * from AppConnectionDo where appIp = :appIp and pid = :pid limit 1")
+	AppConnectionDo getByAppipAndPid(@Param("appIp") String appIp, @Param("pid") Integer pid);
 	
 
 	@Modifying
 	@Query("update AppConnectionDo set lastConnectionTime = :time where id = :id")
-	AppConnectionDo updateConnectionTime( @Param("pid") Long id,  @Param("time") Long time);
+	AppConnectionDo updateConnectionTime( @Param("id") Long id,  @Param("time") Long time);
 }
