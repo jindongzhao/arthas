@@ -19,7 +19,9 @@ import com.taobao.arthas.common.ManageRpcUtil;
 import com.taobao.arthas.common.dto.HeartBeatReqDto;
 import com.taobao.arthas.common.dto.HeartBeatRespDto;
 import com.taobao.arthas.common.dto.ManageTaskDto;
+import com.taobao.arthas.common.log.ArthasLogUtil;
 import com.taobao.arthas.core.shell.ShellServerOptions;
+import com.taobao.middleware.logger.Logger;
 
 /**
  * 启动类
@@ -28,7 +30,8 @@ import com.taobao.arthas.core.shell.ShellServerOptions;
  *
  */
 public class ZeusStarter {
-
+	private static final Logger logger = ArthasLogUtil.getArthasLogger();
+	
 	private final String DEFAULT_TARGET_IP = "127.0.0.1";
 	private final int DEFAULT_TELNET_PORT = 3658;
 	private final int DEFAULT_HTTP_PORT = 8563;
@@ -52,17 +55,6 @@ public class ZeusStarter {
 		zeusStarter.init("3.1.1");
 	}
 
-	/*
-	 * public static void main(String[] args) { HeartBeatReqDto reqDto = new
-	 * HeartBeatReqDto(); reqDto.setAppIp("11.22.333"); reqDto.setPid(1111);
-	 * reqDto.setAppStartCmd("cccccccccc");
-	 * 
-	 * System.out.println("heartbeating..."); HeartBeatRespDto respDto =
-	 * ManageRpcUtil.sendManageRequest("http://127.0.0.1:8080/heartBeat/isAlive",
-	 * reqDto, HeartBeatRespDto.class); System.out.println("heartbeating echo:" +
-	 * JSON.toJSONString(respDto)); }
-	 */
-
 	/**
 	 * 启动线程
 	 * 
@@ -74,6 +66,7 @@ public class ZeusStarter {
 	 *             zhaojindong @date: 2 Jul 2019 11:44:11
 	 */
 	public void init(final String zeusVersion) {
+		logger.info("start zeus "+zeusVersion);
 		Thread zeusThread = new Thread(new Runnable() {
 
 			@Override
@@ -93,9 +86,9 @@ public class ZeusStarter {
 						reqDto.setPid(getCurrentPid());
 						reqDto.setAppStartCmd(getAppCmd());
 
-						System.out.println("heartbeating...");
+						logger.debug("heartbeating...");
 						HeartBeatRespDto respDto = ManageRpcUtil.sendManageRequest(URL_HEART_BEAT, reqDto, HeartBeatRespDto.class);
-						System.out.println("heartbeating echo:" + JSON.toJSONString(respDto));
+						logger.debug("heartbeating echo:" + JSON.toJSONString(respDto));
 
 						// 心跳返回结果中带有事务，执行
 						if (ManageRespsCodeEnum.SUCCESS.getCode().equals(respDto.getResultCode())
@@ -125,8 +118,8 @@ public class ZeusStarter {
 	 * @throws @author:
 	 *             zhaojindong @date: 15 Jul 2019 20:45:23
 	 */
-	private void processTx(ManageTaskDto transactionDto) {
-		if (transactionDto.getCommand().equals(ManageRpcCommandEnum.COMMAND_ATTACH.getCode())) {
+	private void processTx(ManageTaskDto taskDto) {
+		if (taskDto.getCommand().equals(ManageRpcCommandEnum.COMMAND_ATTACH.getCode())) {
 			// TODO attach 之后，需要通知manager
 			System.out.println("do attach...");
 			doAttachCommand();
@@ -253,16 +246,15 @@ public class ZeusStarter {
 
 			// 下载jar
 			try {
+				logger.info("download agent jar from"+jarPathAgent);
 				DownloadUtils.saveUrl(jarPathAgent, JAR_URL_AGENT, true);
+				logger.info("download core jar from"+jarPathCore);
 				DownloadUtils.saveUrl(jarPathCore, JAR_URL_CORE, true);
+				logger.info("download spy jar from"+jarPathSpy);
 				DownloadUtils.saveUrl(jarPathSpy, JAR_URL_SPY, true);
 
-				/*
-				 * HttpUtils.downloadFile(JAR_URL_AGENT, jarPathAgent);
-				 * HttpUtils.downloadFile(JAR_URL_CORE, jarPathCore);
-				 * HttpUtils.downloadFile(JAR_URL_SPY, jarPathSpy);
-				 */
 			} catch (Exception e) {
+				logger.error("DOWNLOAD_JAR_EXCEPTION", "download jar error", e);
 				e.printStackTrace();
 			}
 		}
