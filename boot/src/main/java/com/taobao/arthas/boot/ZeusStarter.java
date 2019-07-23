@@ -65,7 +65,13 @@ public class ZeusStarter {
 				downloadJars();
 				
 				//启动manage command 处理器服务
-				ProcessorServer.start();
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						ProcessorServer.start();
+					}
+				}).start();
 				
 				//向manage server注册自己
 				ManageRegister.register();
