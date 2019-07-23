@@ -16,7 +16,7 @@ import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ManageRespsCodeEnum;
 import com.taobao.arthas.common.ManageRpcCommandEnum;
 import com.taobao.arthas.common.ManageRpcUtil;
-import com.taobao.arthas.common.dto.HeartBeatReqDto;
+import com.taobao.arthas.common.dto.RegisterDto;
 import com.taobao.arthas.common.dto.HeartBeatRespDto;
 import com.taobao.arthas.common.dto.ManageTaskDto;
 import com.taobao.arthas.common.log.ArthasLogUtil;
@@ -29,7 +29,7 @@ import com.taobao.middleware.logger.Logger;
  * @author zhaojindong
  *
  */
-public class ZeusStarter {
+public class ZeusStarter1 {
 	private static final Logger logger = ArthasLogUtil.getArthasLogger();
 	
 	private final String DEFAULT_TARGET_IP = "127.0.0.1";
@@ -51,7 +51,7 @@ public class ZeusStarter {
 	private String jarPathSpy;
 
 	public static void main(String[] args) {
-		ZeusStarter zeusStarter = new ZeusStarter();
+		ZeusStarter1 zeusStarter = new ZeusStarter1();
 		zeusStarter.init("3.1.1");
 	}
 
@@ -81,7 +81,7 @@ public class ZeusStarter {
 
 				while (true) {
 					try {
-						HeartBeatReqDto reqDto = new HeartBeatReqDto();
+						RegisterDto reqDto = new RegisterDto();
 						reqDto.setAppIp(getAppIp());
 						reqDto.setPid(getCurrentPid());
 						reqDto.setAppStartCmd(getAppCmd());
