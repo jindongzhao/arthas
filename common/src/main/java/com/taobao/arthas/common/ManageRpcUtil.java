@@ -12,7 +12,9 @@ public class ManageRpcUtil {
 	* @author: zhaojindong  @date: 15 Jul 2019 20:05:52
 	 */
 	public static <R,T> R sendManageRequest(String url, T requestObj, Class<R> responseClass){
+		System.out.println("请求manage server："+url+"--------"+JSON.toJSONString(requestObj));
 		String responseStr = HttpUtils.doPost(url, HttpUtils.generateRequestParam(requestObj));
+		System.out.println("manage server返回："+JSON.toJSONString(responseStr));
 		R respObj = JSON.parseObject(responseStr, responseClass);
 		return respObj;
 	}

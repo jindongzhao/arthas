@@ -43,6 +43,7 @@ public class ManageRegister {
 		registerDto.setPid(getCurrentPid());
 		registerDto.setConnTelnetPort(GlobalConfig.CONN_TELNET_PORT);
 		registerDto.setCmdTelnetPort(GlobalConfig.CMD_TELNET_PORT);
+		System.out.println("注册自己");
 		logger.debug("register to manage server ...");
 		ManageBaseDto manageBaseDto = ManageRpcUtil.sendManageRequest(URL_REGISTER, registerDto, ManageBaseDto.class);
 		logger.debug("finish register to manage server: " + JSON.toJSONString(manageBaseDto));
