@@ -1,6 +1,7 @@
 package com.taobao.arthas.core.server;
 
 import com.taobao.arthas.core.config.Configure;
+import com.taobao.arthas.core.manage.ManageBizHandler;
 import com.taobao.arthas.core.command.BuiltinCommandPack;
 import com.taobao.arthas.core.shell.ShellServer;
 import com.taobao.arthas.core.shell.ShellServerOptions;
@@ -128,6 +129,9 @@ public class ArthasBootstrap {
                     configure.getTelnetPort(), configure.getHttpPort(), options.getConnectionTimeout());
             // 异步回报启动次数
             UserStatUtil.arthasStart();
+            
+            //通知manage server，attach bind完成
+            ManageBizHandler.notifyAttach(configure.getTelnetPort());
 
             logger.info("as-server started in {} ms", System.currentTimeMillis() - start );
         } catch (Throwable e) {

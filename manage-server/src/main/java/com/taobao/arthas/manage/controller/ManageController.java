@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
+import com.taobao.arthas.common.ManageRpcCommandEnum;
+import com.taobao.arthas.manage.command.telnet.ManageTelnetClient;
 import com.taobao.arthas.manage.common.HttpResponseVo;
 import com.taobao.arthas.manage.constants.enums.TaskStatusEnum;
 import com.taobao.arthas.manage.constants.enums.TaskTypeEnum;
-import com.taobao.arthas.manage.dao.AppConnectionDao;
+import com.taobao.arthas.manage.dao.AppClientDao;
 import com.taobao.arthas.manage.dao.OptTaskDao;
-import com.taobao.arthas.manage.dao.domain.AppConnectionDo;
+import com.taobao.arthas.manage.dao.domain.AppClientDo;
 import com.taobao.arthas.manage.dao.domain.OptTaskDo;
 
 /**
@@ -27,7 +29,7 @@ import com.taobao.arthas.manage.dao.domain.OptTaskDo;
 public class ManageController {
 
 	@Resource
-	private AppConnectionDao appConnectionDao;
+	private AppClientDao appClientDao;
 	@Resource
 	private OptTaskDao optTaskDao;
 
@@ -40,9 +42,9 @@ public class ManageController {
 	 * @throws @author:
 	 *             zhaojindong @date: 20 Jun 2019 14:28:17
 	 */
-	@PostMapping("/manage/getAliveAppList")
+	@PostMapping("/manage/getAppClientList")
 	public String getAliveAppList() {
-		List<AppConnectionDo> resultList = appConnectionDao.findAll();
+		List<AppClientDo> resultList = appClientDao.findAll();
 		return JSON.toJSONString(HttpResponseVo.success(resultList));
 	}
 
@@ -57,25 +59,16 @@ public class ManageController {
 	 *             zhaojindong @date: 20 Jun 2019 14:28:23
 	 */
 	@PostMapping("/manage/command/attach")
-	public String doAttach(@RequestParam(name = "connIdList", required = true) String connIdListStr,
+	public String doAttach(@RequestParam(name = "appClientIdList", required = true) String appClientIdListStr,
 			@RequestParam(name = "loginUserId", required = true) Long loginUserId) {
-		String[] idArr = connIdListStr.split(",");
+		String[] idArr = appClientIdListStr.split(",");
 
-		// 创建总任务
-		OptTaskDo parentTaskDo = new OptTaskDo();
-		parentTaskDo.setTaskTypeCode(TaskTypeEnum.ATTACH.getCode());
-		parentTaskDo.setTaskStatusCode(TaskStatusEnum.INIT.getCode());
-		parentTaskDo.setTaskParam(connIdListStr);
-		optTaskDao.save(parentTaskDo);
-
-		// 创建子任务
-		for (String connId : idArr) {
-			OptTaskDo subTaskBo = new OptTaskDo();
-			subTaskBo.setTaskTypeCode(TaskTypeEnum.ATTACH.getCode());
-			subTaskBo.setTaskStatusCode(TaskStatusEnum.INIT.getCode());
-			subTaskBo.setAppConnectionId(Long.valueOf(connId));
-			subTaskBo.setParentTaskId(parentTaskDo.getId());
-			optTaskDao.save(subTaskBo);
+		for(String idStr : idArr) {
+			AppClientDo appClientDo = appClientDao.getOne(Long.valueOf(idStr));
+			String targetTelnetIp = appClientDo.getAppIp();
+			int targetTelnetPort = appClientDo.getConnTelnetPort();
+			//连接到app的telnet，并发送attach命令
+			ManageTelnetClient.sendCommand(targetTelnetIp, targetTelnetPort, ManageRpcCommandEnum.COMMAND_ATTACH.getCode());
 		}
 
 		return JSON.toJSONString(HttpResponseVo.success(null));

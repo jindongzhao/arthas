@@ -1,8 +1,6 @@
-package com.taobao.arthas.common;
+package com.taobao.arthas.core.util;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,14 +11,8 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSON;
-import com.taobao.arthas.common.dto.RegisterDto;
 
 public class HttpUtils {
 	public static String doGet(String httpurl) {
