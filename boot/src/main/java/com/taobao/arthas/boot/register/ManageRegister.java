@@ -6,12 +6,10 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Random;
 
 import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.boot.GlobalConfig;
 import com.taobao.arthas.common.ManageRpcUtil;
-import com.taobao.arthas.common.dto.HeartBeatRespDto;
 import com.taobao.arthas.common.dto.ManageBaseDto;
 import com.taobao.arthas.common.dto.RegisterDto;
 import com.taobao.arthas.common.log.ArthasLogUtil;
@@ -24,7 +22,7 @@ import com.taobao.middleware.logger.Logger;
  *
  */
 public class ManageRegister {
-	private static final Logger logger = ArthasLogUtil.getArthasLogger();
+	private static final Logger logger = ArthasLogUtil.getArthasClientLogger();
 	private static final String URL_REGISTER = GlobalConfig.MANAGE_SERVER_URL_BASE + "/client/register";
 	
 	/**
@@ -42,8 +40,7 @@ public class ManageRegister {
 		registerDto.setAppStartCmd(getAppCmd());
 		registerDto.setPid(getCurrentPid());
 		registerDto.setConnTelnetPort(GlobalConfig.CONN_TELNET_PORT);
-		registerDto.setCmdTelnetPort(GlobalConfig.CMD_TELNET_PORT);
-		System.out.println("注册自己");
+		registerDto.setCmdTelnetPort(GlobalConfig.DEFAULT_TELNET_PORT);
 		logger.debug("register to manage server ...");
 		ManageBaseDto manageBaseDto = ManageRpcUtil.sendManageRequest(URL_REGISTER, registerDto, ManageBaseDto.class);
 		logger.debug("finish register to manage server: " + JSON.toJSONString(manageBaseDto));

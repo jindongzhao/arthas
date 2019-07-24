@@ -30,7 +30,7 @@ import com.taobao.middleware.logger.Logger;
  *
  */
 public class ZeusStarter1 {
-	private static final Logger logger = ArthasLogUtil.getArthasLogger();
+	private static final Logger logger = ArthasLogUtil.getArthasClientLogger();
 	
 	private final String DEFAULT_TARGET_IP = "127.0.0.1";
 	private final int DEFAULT_TELNET_PORT = 3658;

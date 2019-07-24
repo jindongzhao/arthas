@@ -1,28 +1,10 @@
 package com.taobao.arthas.boot;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
-import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.boot.processor.ProcessorServer;
 import com.taobao.arthas.boot.register.ManageRegister;
-import com.taobao.arthas.common.AnsiLog;
-import com.taobao.arthas.common.ManageRespsCodeEnum;
-import com.taobao.arthas.common.ManageRpcCommandEnum;
-import com.taobao.arthas.common.ManageRpcUtil;
-import com.taobao.arthas.common.dto.RegisterDto;
-import com.taobao.arthas.common.dto.HeartBeatRespDto;
-import com.taobao.arthas.common.dto.ManageTaskDto;
 import com.taobao.arthas.common.log.ArthasLogUtil;
-import com.taobao.arthas.core.shell.ShellServerOptions;
 import com.taobao.middleware.logger.Logger;
 
 /**
@@ -32,10 +14,11 @@ import com.taobao.middleware.logger.Logger;
  *
  */
 public class ZeusStarter {
-	private static final Logger logger = ArthasLogUtil.getArthasLogger();
+	private static final Logger logger = ArthasLogUtil.getArthasClientLogger();
 	
 	public static void main(String[] args) {
 		ZeusStarter zeusStarter = new ZeusStarter();
+		//TODO 先下载jar，然后使用ClassLoader来加载jar，避免应用方依赖
 		zeusStarter.init("3.1.1");
 	}
 
@@ -65,19 +48,20 @@ public class ZeusStarter {
 				downloadJars();
 				
 				//启动manage command 处理器服务
-				new Thread(new Runnable() {
-					
+				Thread commandServerThread = new Thread(new Runnable() {
 					@Override
 					public void run() {
 						ProcessorServer.start();
 					}
-				}).start();
+				});
+				commandServerThread.setName("zeus-command-server-thread");	
+				commandServerThread.start();
 				
 				//向manage server注册自己
 				ManageRegister.register();
 			}
 		});
-		zeusThread.setName("Zeus-heart-beating-thread");
+		zeusThread.setName("zeus-starter-thread");
 		zeusThread.start();
 	}
 

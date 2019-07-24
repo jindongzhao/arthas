@@ -11,27 +11,37 @@ import com.taobao.middleware.logger.support.LoggerHelper;
  * Created by vlinux on 15/3/8.
  */
 public class ArthasLogUtil {
-
     /**
-     * Arthas 内部日志Logger
+     * Arthas client Logger
      */
-    private static final Logger arthasLogger;
-
-    public static final String LOGGER_FILE = LoggerHelper.getLogFile("arthas", "arthas.log");
+    private static final Logger arthasClientLogger;
+    /**
+     * Arthas manage server Logger
+     */
+    private static final Logger arthasManageLogger;
 
     static {
         LogLog.setQuietMode(true);
 
         LoggerHelper.setPattern("arthas-cache", "%d{yyyy-MM-dd HH:mm:ss.SSS}%n%m%n");
-
-        arthasLogger = LoggerFactory.getLogger("arthas");
-        arthasLogger.activateAppenderWithTimeAndSizeRolling("arthas", "arthas.log", "UTF-8", "100MB");
-        arthasLogger.setLevel(Level.DEBUG);
-        arthasLogger.setAdditivity(false);
+        
+        arthasClientLogger = LoggerFactory.getLogger("arthas_client");
+        arthasClientLogger.activateAppenderWithTimeAndSizeRolling("arthas", "arthas_client.log", "UTF-8", "100MB");
+        arthasClientLogger.setLevel(Level.DEBUG);
+        arthasClientLogger.setAdditivity(false);
+        
+        arthasManageLogger = LoggerFactory.getLogger("arthas_manage");
+        arthasManageLogger.activateAppenderWithTimeAndSizeRolling("arthas", "arthas_manage.log", "UTF-8", "100MB");
+        arthasManageLogger.setLevel(Level.DEBUG);
+        arthasManageLogger.setAdditivity(false);
     }
 
-    public static Logger getArthasLogger() {
-        return arthasLogger;
+    public static Logger getArthasClientLogger() {
+        return arthasClientLogger;
+    }
+    
+    public static Logger getArthasManageLogger() {
+        return arthasManageLogger;
     }
 
 }
