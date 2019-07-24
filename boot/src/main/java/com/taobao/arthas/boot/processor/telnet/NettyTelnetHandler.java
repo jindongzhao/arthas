@@ -4,6 +4,8 @@ import java.net.InetAddress;
 import java.util.Date;
 
 import com.taobao.arthas.boot.processor.ManageCommandHandler;
+import com.taobao.arthas.common.log.ArthasLogUtil;
+import com.taobao.middleware.logger.Logger;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -11,6 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 public class NettyTelnetHandler extends SimpleChannelInboundHandler<String> {
+	private static final Logger logger = ArthasLogUtil.getArthasClientLogger();
 	private ManageCommandHandler manageCommandHandler = new ManageCommandHandler();
 	
     @Override
@@ -29,6 +32,7 @@ public class NettyTelnetHandler extends SimpleChannelInboundHandler<String> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String request) throws Exception {
+    	logger.info("client收到manage server命令"+request);
     	String response = manageCommandHandler.handleCommand(request);
     	ctx.write(response);
         ctx.flush();
