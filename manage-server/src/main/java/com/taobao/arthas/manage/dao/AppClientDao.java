@@ -11,6 +11,6 @@ import com.taobao.arthas.manage.dao.domain.AppClientDo;
 public interface AppClientDao extends JpaRepository<AppClientDo, Long> {
 	@Transactional
 	@Modifying
-	@Query("update AppClientDo set isAttach = :isAttach where id = :id")
-	int updateAttachStatus( @Param("id") Long id, @Param("isAttach") Boolean isAttach);
+	@Query("update AppClientDo set isAttached = :isAttached where id = :id")
+	int updateAttachStatus( @Param("id") Long id, @Param("isAttached") Boolean isAttached);
 }
