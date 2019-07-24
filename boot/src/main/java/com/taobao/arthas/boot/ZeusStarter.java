@@ -38,27 +38,33 @@ public class ZeusStarter {
 
 			@Override
 			public void run() {
-				//初始化配置
-				GlobalConfig.zeusPath = GlobalConfig.zeusPath + "/zeus/" + zeusVersion + "/";
-				GlobalConfig.jarPathAgent = GlobalConfig.zeusPath + "arthas-agent.jar";
-				GlobalConfig.jarPathCore = GlobalConfig.zeusPath + "arthas-core.jar";
-				GlobalConfig.jarPathSpy = GlobalConfig.zeusPath + "arthas-spy.jar";
-
-				// 下载zeus需要的jar到user.home下
-				downloadJars();
-				
-				//启动manage command 处理器服务
-				Thread commandServerThread = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						ProcessorServer.start();
-					}
-				});
-				commandServerThread.setName("zeus-command-server-thread");	
-				commandServerThread.start();
-				
-				//向manage server注册自己
-				ManageRegister.register();
+				try {
+					Thread.sleep(10*1000);
+					
+					//初始化配置
+					GlobalConfig.zeusPath = GlobalConfig.zeusPath + "/zeus/" + zeusVersion + "/";
+					GlobalConfig.jarPathAgent = GlobalConfig.zeusPath + "arthas-agent.jar";
+					GlobalConfig.jarPathCore = GlobalConfig.zeusPath + "arthas-core.jar";
+					GlobalConfig.jarPathSpy = GlobalConfig.zeusPath + "arthas-spy.jar";
+	
+					// 下载zeus需要的jar到user.home下
+					downloadJars();
+					
+					//启动manage command 处理器服务
+					Thread commandServerThread = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							ProcessorServer.start();
+						}
+					});
+					commandServerThread.setName("zeus-command-server-thread");	
+					commandServerThread.start();
+					
+					//向manage server注册自己
+					ManageRegister.register();
+				}catch (Exception ex) {
+					logger.error("-1", "启动zeus异常", ex.getMessage());
+				}
 			}
 		});
 		zeusThread.setName("zeus-starter-thread");
