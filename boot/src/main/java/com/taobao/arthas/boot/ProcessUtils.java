@@ -18,6 +18,8 @@ import com.taobao.arthas.common.ExecutingCommand;
 import com.taobao.arthas.common.IOUtils;
 import com.taobao.arthas.common.JavaVersionUtils;
 import com.taobao.arthas.common.PidUtils;
+import com.taobao.arthas.common.log.ArthasLogUtil;
+import com.taobao.middleware.logger.Logger;
 
 /**
  *
@@ -25,6 +27,7 @@ import com.taobao.arthas.common.PidUtils;
  *
  */
 public class ProcessUtils {
+	private static final Logger logger = ArthasLogUtil.getArthasClientLogger();
     private static String FOUND_JAVA_HOME = null;
 
     @SuppressWarnings("resource")
@@ -41,11 +44,11 @@ public class ProcessUtils {
         }
 
         if (processMap.isEmpty()) {
-            AnsiLog.info("Can not find java process. Try to pass <pid> in command line.");
+        	logger.info("Can not find java process. Try to pass <pid> in command line.");
             return -1;
         }
 
-        AnsiLog.info("Found existing java process, please choose one and hit RETURN.");
+        logger.info("Found existing java process, please choose one and hit RETURN.");
         // print list
         int count = 1;
         for (String process : processMap.values()) {
@@ -91,7 +94,7 @@ public class ProcessUtils {
             jps = jpsFile.getAbsolutePath();
         }
 
-        AnsiLog.debug("Try use jps to lis java process, jps: " + jps);
+        logger.debug("Try use jps to lis java process, jps: " + jps);
 
         String[] command = null;
         if (v) {
@@ -156,10 +159,10 @@ public class ProcessUtils {
             }
 
             if (!toolsJar.exists()) {
-                AnsiLog.debug("Can not find tools.jar under java.home: " + javaHome);
+                logger.debug("Can not find tools.jar under java.home: " + javaHome);
                 String javaHomeEnv = System.getenv("JAVA_HOME");
                 if (javaHomeEnv != null && !javaHomeEnv.isEmpty()) {
-                    AnsiLog.debug("Try to find tools.jar in System Env JAVA_HOME: " + javaHomeEnv);
+                    logger.debug("Try to find tools.jar in System Env JAVA_HOME: " + javaHomeEnv);
                     // $JAVA_HOME/lib/tools.jar
                     toolsJar = new File(javaHomeEnv, "lib/tools.jar");
                     if (!toolsJar.exists()) {
@@ -169,7 +172,7 @@ public class ProcessUtils {
                 }
 
                 if (toolsJar.exists()) {
-                    AnsiLog.info("Found java home from System Env JAVA_HOME: " + javaHomeEnv);
+                    logger.info("Found java home from System Env JAVA_HOME: " + javaHomeEnv);
                     FOUND_JAVA_HOME = javaHomeEnv;
                     return FOUND_JAVA_HOME;
                 }
@@ -258,7 +261,7 @@ public class ProcessUtils {
             //启动的子进程的异常退出
             int exitValue = proc.exitValue();
             if (exitValue != 0) {
-                AnsiLog.error("attach fail, targetPid: " + targetPid);
+                logger.error("-1","attach fail, targetPid: " + targetPid);
                 System.exit(1);
             }
         } catch (Throwable e) {
@@ -275,7 +278,7 @@ public class ProcessUtils {
         for (String path : paths) {
             File javaFile = new File(javaHome, path);
             if (javaFile.exists()) {
-                AnsiLog.debug("Found java: " + javaFile.getAbsolutePath());
+                logger.debug("Found java: " + javaFile.getAbsolutePath());
                 javaList.add(javaFile);
             }
         }
@@ -287,7 +290,7 @@ public class ProcessUtils {
          */
 
         if (javaList.isEmpty()) {
-            AnsiLog.debug("Can not find java/java.exe under current java home: " + javaHome);
+            logger.debug("Can not find java/java.exe under current java home: " + javaHome);
             return null;
         }
 
@@ -327,7 +330,7 @@ public class ProcessUtils {
             throw new IllegalArgumentException("Can not find tools.jar under java home: " + javaHome);
         }
 
-        AnsiLog.debug("Found tools.jar: " + toolsJar.getAbsolutePath());
+        logger.debug("Found tools.jar: " + toolsJar.getAbsolutePath());
         return toolsJar;
     }
 
@@ -342,26 +345,26 @@ public class ProcessUtils {
         for (String path : paths) {
             File jpsFile = new File(javaHome, path);
             if (jpsFile.exists()) {
-                AnsiLog.debug("Found jps: " + jpsFile.getAbsolutePath());
+                logger.debug("Found jps: " + jpsFile.getAbsolutePath());
                 jpsList.add(jpsFile);
             }
         }
 
         if (jpsList.isEmpty()) {
-            AnsiLog.debug("Can not find jps under :" + javaHome);
+            logger.debug("Can not find jps under :" + javaHome);
             String javaHomeEnv = System.getenv("JAVA_HOME");
-            AnsiLog.debug("Try to find jps under env JAVA_HOME :" + javaHomeEnv);
+            logger.debug("Try to find jps under env JAVA_HOME :" + javaHomeEnv);
             for (String path : paths) {
                 File jpsFile = new File(javaHomeEnv, path);
                 if (jpsFile.exists()) {
-                    AnsiLog.debug("Found jps: " + jpsFile.getAbsolutePath());
+                    logger.debug("Found jps: " + jpsFile.getAbsolutePath());
                     jpsList.add(jpsFile);
                 }
             }
         }
 
         if (jpsList.isEmpty()) {
-            AnsiLog.debug("Can not find jps under current java home: " + javaHome);
+            logger.debug("Can not find jps under current java home: " + javaHome);
             return null;
         }
 

@@ -5,7 +5,7 @@ package com.taobao.arthas.common.dto;
  * @author zhaojindong
  *
  */
-public class RegisterDto {
+public class RegisterReqDto {
 	private String appIp;
 	private Integer pid;
 	/**

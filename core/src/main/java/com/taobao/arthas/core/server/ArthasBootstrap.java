@@ -131,7 +131,7 @@ public class ArthasBootstrap {
             UserStatUtil.arthasStart();
             
             //通知manage server，attach bind完成
-            ManageBizHandler.notifyAttach(configure.getTelnetPort());
+            ManageBizHandler.notifyAttach(configure.getAppClientId());
 
             logger.info("as-server started in {} ms", System.currentTimeMillis() - start );
         } catch (Throwable e) {

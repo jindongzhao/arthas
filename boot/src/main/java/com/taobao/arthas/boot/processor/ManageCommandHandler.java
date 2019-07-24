@@ -16,8 +16,11 @@ import com.taobao.arthas.boot.GlobalConfig;
 import com.taobao.arthas.boot.ProcessUtils;
 import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ManageRpcCommandEnum;
+import com.taobao.arthas.common.log.ArthasLogUtil;
+import com.taobao.middleware.logger.Logger;
 
 public class ManageCommandHandler {
+	private static final Logger logger = ArthasLogUtil.getArthasClientLogger();
 	/**
 	 * 处理 manage server发送过来的命令
 	 * 
@@ -72,14 +75,18 @@ public class ManageCommandHandler {
 
 		attachArgs.add("-session-timeout");
 		attachArgs.add("" + GlobalConfig.DEFAULT_SESSION_TIMEOUT_SECONDS);
+		
+		//app client id
+		attachArgs.add("-app-client-id");
+		attachArgs.add("" + GlobalConfig.appClientId);
 
 		AnsiLog.debug("Start attach. args: " + attachArgs);
 
 		// zjd 启动arthas进程
-		System.out.println("执行attach,参数:" + JSON.toJSONString(attachArgs));
+		logger.info("执行attach,参数:" + JSON.toJSONString(attachArgs));
 		ProcessUtils.startArthasCore(pid, attachArgs);
 
-		AnsiLog.info("finish attach.", pid);
+		logger.info("finish attach.", pid);
 	}
 
 	private Integer getCurrentPid() {

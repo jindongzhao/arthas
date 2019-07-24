@@ -104,7 +104,9 @@ public class HttpUtils {
 			// 通过连接对象获取一个输出流
 			os = connection.getOutputStream();
 			// 通过输出流对象将参数写出去/传输出去,它是通过字节数组写出的
-			os.write(param.getBytes());
+			if(param != null) {
+				os.write(param.getBytes());
+			}
 			// 通过连接对象获取一个输入流，向远程读取
 			if (connection.getResponseCode() == 200) {
 

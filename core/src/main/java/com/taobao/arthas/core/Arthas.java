@@ -63,8 +63,11 @@ public class Arthas {
         Option sessionTimeout = new TypedOption<Integer>().setType(Integer.class)
                         .setShortName("session-timeout").setDefaultValue("" + Configure.DEFAULT_SESSION_TIMEOUT_SECONDS);
         
+        //app client id
+        Option appClientIdOption = new TypedOption<Long>().setType(Long.class).setShortName("app-client-id").setRequired(true);
+        
         CLI cli = CLIs.create("arthas").addOption(pid).addOption(core).addOption(agent).addOption(target)
-                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout);
+                .addOption(telnetPort).addOption(httpPort).addOption(sessionTimeout).addOption(appClientIdOption);
         
         //zjd 根据Cli的定义，把命令行参数转化成CommandLine
         CommandLine commandLine = cli.parse(Arrays.asList(args));
@@ -84,6 +87,7 @@ public class Arthas {
         configure.setIp((String) commandLine.getOptionValue("target-ip"));
         configure.setTelnetPort((Integer) commandLine.getOptionValue("telnet-port"));
         configure.setHttpPort((Integer) commandLine.getOptionValue("http-port"));
+        configure.setAppClientId((Long)commandLine.getOptionValue("app-client-id"));
         return configure;
     }
 

@@ -20,7 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSON;
-import com.taobao.arthas.common.dto.RegisterDto;
+import com.taobao.arthas.common.dto.RegisterReqDto;
 
 public class HttpUtils {
 	public static String doGet(String httpurl) {

@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.taobao.arthas.common.ManageRespsCodeEnum;
 import com.taobao.arthas.common.ManageRpcUtil;
+import com.taobao.arthas.common.dto.FinishAttachReqDto;
 import com.taobao.arthas.common.dto.ManageBaseDto;
-import com.taobao.arthas.common.dto.RegisterDto;
+import com.taobao.arthas.common.dto.RegisterReqDto;
+import com.taobao.arthas.common.dto.RegisterRespDto;
 import com.taobao.arthas.manage.dao.AppClientDao;
 import com.taobao.arthas.manage.dao.domain.AppClientDo;
-import com.taobao.arthas.manage.dto.FinishAttachReqDto;
 
 /**
  * 客户端 controller
@@ -37,7 +38,7 @@ public class AppClientController {
 	 */
 	@PostMapping("/client/register")
 	public String register(@RequestParam(name = "params", required = true) String params) {
-		RegisterDto reqDto = ManageRpcUtil.deserializeReqParam(params, RegisterDto.class);
+		RegisterReqDto reqDto = ManageRpcUtil.deserializeReqParam(params, RegisterReqDto.class);
 		AppClientDo registerDo = new AppClientDo();
 		registerDo.setAppIp(reqDto.getAppIp());
 		registerDo.setAppStartCmd(reqDto.getAppStartCmd());
@@ -47,9 +48,10 @@ public class AppClientController {
 		registerDo.setIsAttached(false);
 		appClientDao.save(registerDo);
 
-		ManageBaseDto baseDto = new ManageBaseDto();
-		baseDto.setResultCode(ManageRespsCodeEnum.SUCCESS.getCode());
-		return ManageRpcUtil.serializeRspsResult(baseDto);
+		RegisterRespDto respDto = new RegisterRespDto();
+		respDto.setResultCode(ManageRespsCodeEnum.SUCCESS.getCode());
+		respDto.setAppClientId(registerDo.getId());
+		return ManageRpcUtil.serializeRspsResult(respDto);
 	}
 
 	/**
@@ -64,9 +66,9 @@ public class AppClientController {
 	@PostMapping("/client/finishAttach")
 	public String finishAttach(@RequestParam(name = "params", required = true) String params) {
 		FinishAttachReqDto reqDto = ManageRpcUtil.deserializeReqParam(params, FinishAttachReqDto.class);
-		Long registerId = reqDto.getRegisterId();
+		Long appClientId = reqDto.getAppClientId();
 		//更新客户端状态为已连接
-		appClientDao.updateAttachStatus(registerId, true);
+		appClientDao.updateAttachStatus(appClientId, true);
 		
 		ManageBaseDto baseDto = new ManageBaseDto();
 		baseDto.setResultCode(ManageRespsCodeEnum.SUCCESS.getCode());

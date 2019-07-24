@@ -11,7 +11,8 @@ import com.alibaba.fastjson.JSON;
 import com.taobao.arthas.boot.GlobalConfig;
 import com.taobao.arthas.common.ManageRpcUtil;
 import com.taobao.arthas.common.dto.ManageBaseDto;
-import com.taobao.arthas.common.dto.RegisterDto;
+import com.taobao.arthas.common.dto.RegisterReqDto;
+import com.taobao.arthas.common.dto.RegisterRespDto;
 import com.taobao.arthas.common.log.ArthasLogUtil;
 import com.taobao.middleware.logger.Logger;
 
@@ -35,15 +36,18 @@ public class ManageRegister {
 	 *             zhaojindong @date: 23 Jul 2019 20:19:01
 	 */
 	public static void register() {
-		RegisterDto registerDto = new RegisterDto();
+		RegisterReqDto registerDto = new RegisterReqDto();
 		registerDto.setAppIp(getAppIp());
 		registerDto.setAppStartCmd(getAppCmd());
 		registerDto.setPid(getCurrentPid());
 		registerDto.setConnTelnetPort(GlobalConfig.CONN_TELNET_PORT);
 		registerDto.setCmdTelnetPort(GlobalConfig.DEFAULT_TELNET_PORT);
 		logger.debug("register to manage server ...");
-		ManageBaseDto manageBaseDto = ManageRpcUtil.sendManageRequest(URL_REGISTER, registerDto, ManageBaseDto.class);
-		logger.debug("finish register to manage server: " + JSON.toJSONString(manageBaseDto));
+		RegisterRespDto respDto = ManageRpcUtil.sendManageRequest(URL_REGISTER, registerDto, RegisterRespDto.class);
+		logger.debug("finish register to manage server: " + JSON.toJSONString(respDto));
+		
+		//在manage server生成的app client id，后续操作时需要用到
+		GlobalConfig.appClientId = respDto.getAppClientId();
 	}
 
 	private static Integer getCurrentPid() {

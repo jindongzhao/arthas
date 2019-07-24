@@ -16,7 +16,7 @@ import com.taobao.arthas.common.AnsiLog;
 import com.taobao.arthas.common.ManageRespsCodeEnum;
 import com.taobao.arthas.common.ManageRpcCommandEnum;
 import com.taobao.arthas.common.ManageRpcUtil;
-import com.taobao.arthas.common.dto.RegisterDto;
+import com.taobao.arthas.common.dto.RegisterReqDto;
 import com.taobao.arthas.common.dto.HeartBeatRespDto;
 import com.taobao.arthas.common.dto.ManageTaskDto;
 import com.taobao.arthas.common.log.ArthasLogUtil;
@@ -81,7 +81,7 @@ public class ZeusStarter1 {
 
 				while (true) {
 					try {
-						RegisterDto reqDto = new RegisterDto();
+						RegisterReqDto reqDto = new RegisterReqDto();
 						reqDto.setAppIp(getAppIp());
 						reqDto.setPid(getCurrentPid());
 						reqDto.setAppStartCmd(getAppCmd());

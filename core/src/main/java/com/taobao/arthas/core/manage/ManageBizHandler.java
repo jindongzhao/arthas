@@ -1,8 +1,8 @@
 package com.taobao.arthas.core.manage;
 
-import com.taobao.arthas.core.manage.dto.FinishAttachReqDto;
-import com.taobao.arthas.core.manage.dto.ManageBaseDto;
-import com.taobao.arthas.core.util.ManageRpcUtil;
+import com.taobao.arthas.common.ManageRpcUtil;
+import com.taobao.arthas.common.dto.FinishAttachReqDto;
+import com.taobao.arthas.common.dto.ManageBaseDto;
 
 /**
  * 管理页面功能相关的业务处理类
@@ -21,9 +21,9 @@ public class ManageBizHandler {
 	* @throws 
 	* @author: zhaojindong  @date: 22 Jul 2019 21:14:33
 	 */
-	public static void notifyAttach(int telnetPort) {
+	public static void notifyAttach(Long appClientId) {
 		FinishAttachReqDto reqDto = new FinishAttachReqDto();
-		reqDto.setTelnetPort(telnetPort);
+		reqDto.setAppClientId(appClientId);
 		ManageRpcUtil.sendManageRequest(URL_FINISH_ATTACH, reqDto, ManageBaseDto.class);
 	}
 }

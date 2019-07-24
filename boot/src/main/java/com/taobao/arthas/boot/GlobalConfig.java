@@ -22,4 +22,9 @@ public class GlobalConfig {
 	
 	public static final int CONN_TELNET_PORT = 3999;
 	public static final int CMD_TELNET_PORT = 5999;
+	
+	/**
+	 * 注册成功后生成的appClientId
+	 */
+	public static Long appClientId;
 }

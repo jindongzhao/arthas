@@ -28,6 +28,8 @@ public class Configure {
      * session timeout seconds
      */
     private long sessionTimeout = DEFAULT_SESSION_TIMEOUT_SECONDS;
+    
+    private Long appClientId;
 
     public String getIp() {
         return ip;
@@ -84,8 +86,19 @@ public class Configure {
     public void setSessionTimeout(long sessionTimeout) {
         this.sessionTimeout = sessionTimeout;
     }
+    
 
-    // 对象的编码解码器
+    public Long getAppClientId() {
+		return appClientId;
+	}
+
+	public void setAppClientId(Long appClientId) {
+		this.appClientId = appClientId;
+	}
+
+
+
+	// 对象的编码解码器
     private final static FeatureCodec codec = new FeatureCodec(';', '=');
 
     /**
