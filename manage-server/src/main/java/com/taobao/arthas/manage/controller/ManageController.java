@@ -108,7 +108,7 @@ public class ManageController {
 			//MOCK TODO 解决rt.jar的依赖
 			ICommandSender commandSender = new TelnetCommandSender("127.0.0.1",3658);
 			String response = commandSender.sendCommand(cmd);
-			resultMap.put("id"+cmd, response);
+			resultMap.put("id-"+id+"cmd-"+cmd, response);
 		}
 		
 		return JSON.toJSONString(HttpResponseVo.success(resultMap));
