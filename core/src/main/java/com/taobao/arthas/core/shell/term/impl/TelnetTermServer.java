@@ -59,12 +59,14 @@ public class TelnetTermServer extends TermServer {
             	 */
                 @Override
                 public void accept(final TtyConnection conn) {
+                    logger.info("telnet server, 接收到连接请求");
                 	//zjd Helper.loadKeymap():加载命令行快捷键和操作系统命令行处理函数Function的name的映射关系
                 	//用TermImpl封装termd建立通信的api
                     termHandler.handle(new TermImpl(Helper.loadKeymap(), conn));
                 }
             }).get(connectionTimeout, TimeUnit.MILLISECONDS);
             listenHandler.handle(Future.<TermServer>succeededFuture());
+            logger.info("telnet server启动完成。hostIp:{},port:{}",hostIp,port);
         } catch (Throwable t) {
             logger.error(null, "Error listening to port " + port, t);
             listenHandler.handle(Future.<TermServer>failedFuture(t));

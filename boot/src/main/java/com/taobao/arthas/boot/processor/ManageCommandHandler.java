@@ -64,8 +64,9 @@ public class ManageCommandHandler {
 		attachArgs.add("-telnet-port");
 		attachArgs.add("" + GlobalConfig.DEFAULT_TELNET_PORT);
 
-		attachArgs.add("-http-port");
-		attachArgs.add("" + GlobalConfig.DEFAULT_HTTP_PORT);
+		//不启用http server
+		/*attachArgs.add("-http-port");
+		attachArgs.add("" + GlobalConfig.DEFAULT_HTTP_PORT);*/
 
 		attachArgs.add("-core");
 		attachArgs.add(new File(GlobalConfig.jarPathCore).getAbsolutePath());
