@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Resource;
 
@@ -101,7 +102,8 @@ public class ManageController {
 		//查询应用配置信息
 		List<Long> idList = convertAppClientIdList(appClientIdListStr);
 		for(Long id : idList) {
-			AppClientDo appClientDo = appClientDao.getOne(id);
+			Optional<AppClientDo> appClientDoOpt = appClientDao.findById(id);
+			AppClientDo appClientDo = appClientDoOpt.get();
 			ICommandSender commandSender = new TelnetCommandSender(appClientDo.getAppIp(),appClientDo.getCmdTelnetPort());
 			String response = commandSender.sendCommand(cmd);
 			resultMap.put("id"+cmd, response);

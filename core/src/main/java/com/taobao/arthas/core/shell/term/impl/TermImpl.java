@@ -15,6 +15,10 @@ import com.taobao.arthas.core.shell.term.SignalHandler;
 import com.taobao.arthas.core.shell.term.Term;
 import com.taobao.arthas.core.util.Constants;
 import com.taobao.arthas.core.util.FileUtils;
+import com.taobao.arthas.core.util.LogUtil;
+import com.taobao.middleware.logger.Logger;
+import com.taobao.middleware.logger.LoggerFactory;
+
 import io.termd.core.function.Consumer;
 import io.termd.core.readline.Function;
 import io.termd.core.readline.Functions;
@@ -31,6 +35,7 @@ import java.util.List;
  * @author <a href="mailto:julien@julienviet.com">Julien Viet</a>
  */
 public class TermImpl implements Term {
+    private static Logger logger = LogUtil.getArthasLogger();
 
 	//操作系统默认的命令行处理函数。也可以使用：Functions.loadDefaults()
     private static final List<Function> readlineFunctions = Helper.loadServices(Function.class.getClassLoader(), Function.class);
