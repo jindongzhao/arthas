@@ -29,7 +29,7 @@ public class TestHtmlController {
 	@Value("${application.message:Hello World}")
 	private String message = "Hello World";
 
-	@GetMapping("/getHtml")
+	@GetMapping("/welcome.html")
 	public String getHtml(Map<String, Object> model) {
 		model.put("time", new Date());
 		model.put("message", this.message);

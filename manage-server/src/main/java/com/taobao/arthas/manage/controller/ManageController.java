@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,7 +45,7 @@ public class ManageController {
 	 * @throws @author:
 	 *             zhaojindong @date: 20 Jun 2019 14:28:17
 	 */
-	@PostMapping("/manage/getAppClientList")
+	@RequestMapping("/manage/getAppClientList")
 	public String getAliveAppList() {
 		List<AppClientDo> resultList = appClientDao.findAll();
 		return JSON.toJSONString(HttpResponseVo.success(resultList));
@@ -60,7 +61,7 @@ public class ManageController {
 	 * @throws @author:
 	 *             zhaojindong @date: 20 Jun 2019 14:28:23
 	 */
-	@PostMapping("/manage/command/attach")
+	@RequestMapping("/manage/command/attach")
 	public String doAttach(@RequestParam(name = "appClientIdList", required = true) String appClientIdListStr,
 			@RequestParam(name = "loginUserId", required = true) Long loginUserId) {
 		String[] idArr = appClientIdListStr.split(",");
@@ -94,7 +95,7 @@ public class ManageController {
 	 * @throws @author:
 	 *             zhaojindong @date: 20 Jun 2019 14:28:23
 	 */
-	@PostMapping("/manage/command/cmd")
+	@RequestMapping("/manage/command/cmd")
 	public String cmd(@RequestParam(name = "appClientIdList", required = true) String appClientIdListStr,
 			@RequestParam(name = "cmd", required = true) String cmd) {
 		Map<String, String> resultMap = new HashMap<String, String>();
