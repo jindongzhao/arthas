@@ -74,7 +74,7 @@ public class ManageRegister {
 		return ipAddrStr;
 	}
 
-	private static String getAppCmd() {
+	public static String getAppCmd() {
 		BufferedReader br = null;
 		try {
 			Integer pid = getCurrentPid();
@@ -102,4 +102,5 @@ public class ManageRegister {
 		}
 		return null;
 	}
+	
 }

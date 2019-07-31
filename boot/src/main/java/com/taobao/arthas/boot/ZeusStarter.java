@@ -1,9 +1,12 @@
 package com.taobao.arthas.boot;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 
 import com.taobao.arthas.boot.processor.ProcessorServer;
 import com.taobao.arthas.boot.register.ManageRegister;
+import com.taobao.arthas.common.ManageRespsCodeEnum;
 import com.taobao.arthas.common.log.ArthasLogUtil;
 import com.taobao.middleware.logger.Logger;
 
@@ -19,9 +22,11 @@ public class ZeusStarter {
 	public static void main(String[] args) {
 		ZeusStarter zeusStarter = new ZeusStarter();
 		// TODO 先下载jar，然后使用ClassLoader来加载jar，避免应用方依赖
-		zeusStarter.init("3.1.1");
+		//zeusStarter.init("3.1.1");
+		
+		logger.info("cmd========>"+ManageRegister.getAppCmd());
 	}
-
+	
 	/**
 	 * 启动线程
 	 * 
