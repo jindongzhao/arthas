@@ -22,11 +22,18 @@ public class ZeusStarter {
 	public static void main(String[] args) {
 		ZeusStarter zeusStarter = new ZeusStarter();
 		// TODO 先下载jar，然后使用ClassLoader来加载jar，避免应用方依赖
-		//zeusStarter.init("3.1.1");
+		zeusStarter.init("3.1.1");
 		
-		logger.info("cmd========>"+ManageRegister.getAppCmd());
+		//Mock 主进程进行中
+		while(true) {
+			try {
+				Thread.sleep(1000*100);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
-	
+
 	/**
 	 * 启动线程
 	 * 
@@ -38,36 +45,37 @@ public class ZeusStarter {
 	 *             zhaojindong @date: 2 Jul 2019 11:44:11
 	 */
 	public void init(final String zeusVersion) {
-		logger.info("start zeus " + zeusVersion);
-		Thread zeusThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				// 初始化配置
-				GlobalConfig.zeusPath = GlobalConfig.zeusPath + "/zeus/" + zeusVersion + "/";
-				GlobalConfig.jarPathAgent = GlobalConfig.zeusPath + "arthas-agent.jar";
-				GlobalConfig.jarPathCore = GlobalConfig.zeusPath + "arthas-core.jar";
-				GlobalConfig.jarPathSpy = GlobalConfig.zeusPath + "arthas-spy.jar";
-
-				// 下载zeus需要的jar到user.home下
-				downloadJars();
-
-				// 启动manage command 处理器服务
-				Thread commandServerThread = new Thread(new Runnable() {
-					@Override
-					public void run() {
-						ProcessorServer.start();
-					}
-				});
-				commandServerThread.setName("zeus-command-server-thread");
-				commandServerThread.start();
-			}
-		});
-		zeusThread.setName("zeus-starter-thread");
-		zeusThread.start();
-
 		try {
 			Thread.sleep(10 * 1000);
+
+			logger.info("start zeus " + zeusVersion);
+
+			Thread zeusThread = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					// 初始化配置
+					GlobalConfig.zeusPath = GlobalConfig.zeusPath + "/zeus/" + zeusVersion + "/";
+					GlobalConfig.jarPathAgent = GlobalConfig.zeusPath + "arthas-agent.jar";
+					GlobalConfig.jarPathCore = GlobalConfig.zeusPath + "arthas-core.jar";
+					GlobalConfig.jarPathSpy = GlobalConfig.zeusPath + "arthas-spy.jar";
+
+					// 下载zeus需要的jar到user.home下
+					downloadJars();
+
+					// 启动manage command 处理器服务
+					Thread commandServerThread = new Thread(new Runnable() {
+						@Override
+						public void run() {
+							ProcessorServer.start();
+						}
+					});
+					commandServerThread.setName("zeus-command-server-thread");
+					commandServerThread.start();
+				}
+			});
+			zeusThread.setName("zeus-starter-thread");
+			zeusThread.start();
 
 			// 向manage server注册自己
 			ManageRegister.register();
