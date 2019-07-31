@@ -24,7 +24,8 @@ public class ZeusStarter {
 		// TODO 先下载jar，然后使用ClassLoader来加载jar，避免应用方依赖
 		//zeusStarter.init("3.1.1");
 		
-		logger.info("执行cmd的结果=========>"+excuteCmd("ps -X -p 32735 | grep 32735"));
+		//logger.info("执行cmd的结果=========>"+excuteCmd("ps -X -p 32735 | grep 32735"));
+		logger.info("执行cmd的结果=========>"+excuteCmd("ls"));
 		
 		//Mock 主进程进行中
 		while(true) {
