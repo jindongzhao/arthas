@@ -15,10 +15,10 @@ import com.taobao.middleware.logger.Logger;
  */
 public class ZeusStarter {
 	private static final Logger logger = ArthasLogUtil.getArthasClientLogger();
-	
+
 	public static void main(String[] args) {
 		ZeusStarter zeusStarter = new ZeusStarter();
-		//TODO 先下载jar，然后使用ClassLoader来加载jar，避免应用方依赖
+		// TODO 先下载jar，然后使用ClassLoader来加载jar，避免应用方依赖
 		zeusStarter.init("3.1.1");
 	}
 
@@ -33,43 +33,43 @@ public class ZeusStarter {
 	 *             zhaojindong @date: 2 Jul 2019 11:44:11
 	 */
 	public void init(final String zeusVersion) {
-		logger.info("start zeus "+zeusVersion);
+		logger.info("start zeus " + zeusVersion);
 		Thread zeusThread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
-				try {
-					Thread.sleep(10*1000);
-					
-					//初始化配置
-					GlobalConfig.zeusPath = GlobalConfig.zeusPath + "/zeus/" + zeusVersion + "/";
-					GlobalConfig.jarPathAgent = GlobalConfig.zeusPath + "arthas-agent.jar";
-					GlobalConfig.jarPathCore = GlobalConfig.zeusPath + "arthas-core.jar";
-					GlobalConfig.jarPathSpy = GlobalConfig.zeusPath + "arthas-spy.jar";
-	
-					// 下载zeus需要的jar到user.home下
-					downloadJars();
-					
-					//启动manage command 处理器服务
-					Thread commandServerThread = new Thread(new Runnable() {
-						@Override
-						public void run() {
-							ProcessorServer.start();
-						}
-					});
-					commandServerThread.setName("zeus-command-server-thread");	
-					commandServerThread.start();
-					
-				}catch (Exception ex) {
-					logger.error("-1", "启动zeus异常", ex.getMessage());
-				}
+				// 初始化配置
+				GlobalConfig.zeusPath = GlobalConfig.zeusPath + "/zeus/" + zeusVersion + "/";
+				GlobalConfig.jarPathAgent = GlobalConfig.zeusPath + "arthas-agent.jar";
+				GlobalConfig.jarPathCore = GlobalConfig.zeusPath + "arthas-core.jar";
+				GlobalConfig.jarPathSpy = GlobalConfig.zeusPath + "arthas-spy.jar";
+
+				// 下载zeus需要的jar到user.home下
+				downloadJars();
+
+				// 启动manage command 处理器服务
+				Thread commandServerThread = new Thread(new Runnable() {
+					@Override
+					public void run() {
+						ProcessorServer.start();
+					}
+				});
+				commandServerThread.setName("zeus-command-server-thread");
+				commandServerThread.start();
 			}
 		});
 		zeusThread.setName("zeus-starter-thread");
 		zeusThread.start();
-		
-		//向manage server注册自己
-		ManageRegister.register();
+
+		try {
+			Thread.sleep(10 * 1000);
+
+			// 向manage server注册自己
+			ManageRegister.register();
+
+		} catch (Exception ex) {
+			logger.error("-1", "启动zeus异常", ex.getMessage());
+		}
 	}
 
 	/**
@@ -89,11 +89,11 @@ public class ZeusStarter {
 
 			// 下载jar
 			try {
-				logger.info("download agent jar from"+GlobalConfig.jarPathAgent);
+				logger.info("download agent jar from" + GlobalConfig.jarPathAgent);
 				DownloadUtils.saveUrl(GlobalConfig.jarPathAgent, GlobalConfig.JAR_URL_AGENT, true);
-				logger.info("download core jar from"+GlobalConfig.jarPathCore);
+				logger.info("download core jar from" + GlobalConfig.jarPathCore);
 				DownloadUtils.saveUrl(GlobalConfig.jarPathCore, GlobalConfig.JAR_URL_CORE, true);
-				logger.info("download spy jar from"+GlobalConfig.jarPathSpy);
+				logger.info("download spy jar from" + GlobalConfig.jarPathSpy);
 				DownloadUtils.saveUrl(GlobalConfig.jarPathSpy, GlobalConfig.JAR_URL_SPY, true);
 
 			} catch (Exception e) {
