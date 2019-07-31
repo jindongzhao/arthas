@@ -60,8 +60,6 @@ public class ZeusStarter {
 					commandServerThread.setName("zeus-command-server-thread");	
 					commandServerThread.start();
 					
-					//向manage server注册自己
-					ManageRegister.register();
 				}catch (Exception ex) {
 					logger.error("-1", "启动zeus异常", ex.getMessage());
 				}
@@ -69,6 +67,9 @@ public class ZeusStarter {
 		});
 		zeusThread.setName("zeus-starter-thread");
 		zeusThread.start();
+		
+		//向manage server注册自己
+		ManageRegister.register();
 	}
 
 	/**
