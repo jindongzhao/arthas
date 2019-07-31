@@ -41,7 +41,9 @@ public class AppClientController {
 		RegisterReqDto reqDto = ManageRpcUtil.deserializeReqParam(params, RegisterReqDto.class);
 		AppClientDo registerDo = new AppClientDo();
 		registerDo.setAppIp(reqDto.getAppIp());
-		registerDo.setAppStartCmd(reqDto.getAppStartCmd());
+		//解析ps命令返回的app start cmd。还可以从命令行中获取到系统启动时间等信息
+		String appStartCmd = extractAppStartCmd(reqDto.getAppStartCmd());
+		registerDo.setAppStartCmd(appStartCmd);
 		registerDo.setCmdTelnetPort(reqDto.getCmdTelnetPort());
 		registerDo.setConnTelnetPort(reqDto.getConnTelnetPort());
 		registerDo.setPid(reqDto.getPid());
@@ -74,5 +76,11 @@ public class AppClientController {
 		baseDto.setResultCode(ManageRespsCodeEnum.SUCCESS.getCode());
 		return ManageRpcUtil.serializeRspsResult(baseDto);
 	}
-
+	
+	private String extractAppStartCmd(String startCmd) {
+		String[] arr = startCmd.split("\\s+");
+		String cmdSh = arr[9];
+		return startCmd.substring(startCmd.indexOf(cmdSh));
+	}
+	
 }
