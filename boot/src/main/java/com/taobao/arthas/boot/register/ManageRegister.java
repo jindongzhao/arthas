@@ -78,6 +78,7 @@ public class ManageRegister {
 		BufferedReader br = null;
 		try {
 			Integer pid = getCurrentPid();
+			logger.info("获取app cmd，pid："+pid);
 			String cmd = "ps -X -p " + pid + " | grep " + pid;
 			Process p = Runtime.getRuntime().exec(cmd);
 			br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -86,6 +87,7 @@ public class ManageRegister {
 			while ((line = br.readLine()) != null) {
 				sb.append(line + "\n");
 			}
+			logger.info("获取到的cmd："+sb.toString());
 			return sb.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
