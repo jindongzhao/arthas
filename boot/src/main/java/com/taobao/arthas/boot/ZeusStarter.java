@@ -3,6 +3,8 @@ package com.taobao.arthas.boot;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.taobao.arthas.boot.processor.ProcessorServer;
 import com.taobao.arthas.boot.register.ManageRegister;
@@ -24,8 +26,8 @@ public class ZeusStarter {
 		// TODO 先下载jar，然后使用ClassLoader来加载jar，避免应用方依赖
 		//zeusStarter.init("3.1.1");
 		
-		//logger.info("执行cmd的结果=========>"+excuteCmd("ps -X -p 32735 | grep 32735"));
-		logger.info("执行cmd的结果=========>"+excuteCmd("ps axu | grep 32735"));
+		logger.info("执行cmd的结果=========>"+excuteCmd("ps -X -p 32735 | grep 32735"));
+		//logger.info("执行cmd的结果=========>"+excuteCmd("ps axu | grep 32735"));
 		
 		//Mock 主进程进行中
 		while(true) {
@@ -41,7 +43,8 @@ public class ZeusStarter {
 		BufferedReader br = null;
 		try {
 			logger.info("执行命令："+cmd);
-			Process p = Runtime.getRuntime().exec(cmd);
+			String[] cmdArr = {"sh","-c",cmd};
+			Process p = Runtime.getRuntime().exec(cmdArr);
 			br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line = null;
 			StringBuilder sb = new StringBuilder();
