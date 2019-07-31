@@ -22,7 +22,9 @@ public class ZeusStarter {
 	public static void main(String[] args) {
 		ZeusStarter zeusStarter = new ZeusStarter();
 		// TODO 先下载jar，然后使用ClassLoader来加载jar，避免应用方依赖
-		zeusStarter.init("3.1.1");
+		//zeusStarter.init("3.1.1");
+		
+		logger.info("执行cmd的结果=========>"+excuteCmd("ps -X -p 32735 | grep 32735"));
 		
 		//Mock 主进程进行中
 		while(true) {
@@ -34,6 +36,33 @@ public class ZeusStarter {
 		}
 	}
 
+	private static String excuteCmd(String cmd) {
+		BufferedReader br = null;
+		try {
+			logger.info("执行命令："+cmd);
+			Process p = Runtime.getRuntime().exec(cmd);
+			br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line = null;
+			StringBuilder sb = new StringBuilder();
+			while ((line = br.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			logger.info("获取到的cmd结果："+sb.toString());
+			return sb.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * 启动线程
 	 * 
