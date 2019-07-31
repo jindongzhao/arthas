@@ -25,7 +25,7 @@ public class ZeusStarter {
 		//zeusStarter.init("3.1.1");
 		
 		//logger.info("执行cmd的结果=========>"+excuteCmd("ps -X -p 32735 | grep 32735"));
-		logger.info("执行cmd的结果=========>"+excuteCmd("ls"));
+		logger.info("执行cmd的结果=========>"+excuteCmd("ps axu | grep 32735"));
 		
 		//Mock 主进程进行中
 		while(true) {
