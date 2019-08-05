@@ -10,7 +10,7 @@ import com.taobao.arthas.common.dto.ManageBaseDto;
  *
  */
 public class ManageBizHandler {
-	private final static String URL_BASE = "http://127.0.0.1:8080";
+	private final static String URL_BASE = "http://127.0.0.1:9009";
 	private final static String URL_FINISH_ATTACH = URL_BASE + "/client/finishAttach";
 	
 	/**
