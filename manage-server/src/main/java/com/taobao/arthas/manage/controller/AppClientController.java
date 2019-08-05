@@ -46,7 +46,11 @@ public class AppClientController {
 	public String register(@RequestParam(name = "params", required = true) String params) {
 		RegisterReqDto reqDto = ManageRpcUtil.deserializeReqParam(params, RegisterReqDto.class);
 		AppClientDo registerDo = new AppClientDo();
-		registerDo.setAppIp(reqDto.getAppIp());
+		
+		//TODO Mock 测试服务器没有开通telnet端口，所以这里写死127.0.0.1（client和server必须运行在同一台机器）
+		registerDo.setAppIp("127.0.0.1");
+		
+		//registerDo.setAppIp(reqDto.getAppIp());
 		//解析ps命令返回的app start cmd。还可以从命令行中获取到系统启动时间等信息
 		String appStartCmd = extractAppStartCmd(reqDto.getAppStartCmd());
 		registerDo.setAppStartCmd(appStartCmd);
