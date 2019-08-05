@@ -1,16 +1,9 @@
-package com.taobao.arthas.manage.dao;
-
-import java.util.List;
+/*package com.taobao.arthas.manage.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.taobao.arthas.manage.dao.domain.OptTaskDo;
 
-public interface OptTaskDao extends JpaRepository<OptTaskDo, Long> {
+public interface OptTaskDao extends JpaRepository {
 
 	@Query("select t from OptTaskDo t where appConnectionId = :appConnectionId and taskStatusCode = :taskStatusCode")
 	List<OptTaskDo> getByConnectionIdAndStatus(@Param("appConnectionId") Long appConnectionId, @Param("taskStatusCode") Integer taskStatusCode);
@@ -21,3 +14,4 @@ public interface OptTaskDao extends JpaRepository<OptTaskDo, Long> {
 	int updateStatus( @Param("id") Long id, @Param("taskStatusCode")  Integer taskStatusCode);
 
 }
+*/

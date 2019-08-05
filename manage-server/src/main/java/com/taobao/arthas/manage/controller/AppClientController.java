@@ -13,7 +13,9 @@ import com.taobao.arthas.common.dto.ManageBaseDto;
 import com.taobao.arthas.common.dto.RegisterReqDto;
 import com.taobao.arthas.common.dto.RegisterRespDto;
 import com.taobao.arthas.manage.dao.AppClientDao;
+import com.taobao.arthas.manage.dao.TaskDao;
 import com.taobao.arthas.manage.dao.domain.AppClientDo;
+import com.taobao.arthas.manage.service.TaskService;
 
 /**
  * 客户端 controller
@@ -26,6 +28,10 @@ public class AppClientController {
 
 	@Resource
 	private AppClientDao appClientDao;
+	@Resource
+	private TaskDao taskDao;
+	@Resource
+	private TaskService taskService;
 	
 	/**
 	 * 注册
@@ -69,8 +75,12 @@ public class AppClientController {
 	public String finishAttach(@RequestParam(name = "params", required = true) String params) {
 		FinishAttachReqDto reqDto = ManageRpcUtil.deserializeReqParam(params, FinishAttachReqDto.class);
 		Long appClientId = reqDto.getAppClientId();
+		
 		//更新客户端状态为已连接
 		appClientDao.updateAttachStatus(appClientId, true);
+		
+		//执行所有此appId上的带执行的任务
+		taskService.asynchDoTaskByAppId(appClientId);
 		
 		ManageBaseDto baseDto = new ManageBaseDto();
 		baseDto.setResultCode(ManageRespsCodeEnum.SUCCESS.getCode());

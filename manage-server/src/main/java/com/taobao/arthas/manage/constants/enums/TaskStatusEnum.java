@@ -1,10 +1,15 @@
 package com.taobao.arthas.manage.constants.enums;
 
+/**
+ * 任务状态
+ * @author zhaojindong
+ *
+ */
 public enum TaskStatusEnum {
-	INIT(0,"初始化状态"),
-	DOING(1,"执行中"),
-	DONE(2,"执行完成"),
-	FAIL(3,"执行失败");
+	INIT(0,"初始化"),
+	ATTACHING(1,"attach中"),
+	CMD_DONING(2,"cmd执行中"),
+	FINISH(3,"执行完成");
 	
 	TaskStatusEnum(Integer code,String message){
 		this.code = code;

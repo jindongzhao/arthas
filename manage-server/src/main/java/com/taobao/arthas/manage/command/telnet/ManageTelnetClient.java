@@ -6,6 +6,11 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
+/**
+ * 与目标机保持
+ * @author zhaojindong
+ *
+ */
 public class ManageTelnetClient {
 	/**
 	 * 向telnet server发送信息

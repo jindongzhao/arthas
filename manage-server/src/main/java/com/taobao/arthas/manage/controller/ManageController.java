@@ -18,7 +18,6 @@ import com.taobao.arthas.manage.client.TelnetCommandSender;
 import com.taobao.arthas.manage.command.telnet.ManageTelnetClient;
 import com.taobao.arthas.manage.common.HttpResponseVo;
 import com.taobao.arthas.manage.dao.AppClientDao;
-import com.taobao.arthas.manage.dao.OptTaskDao;
 import com.taobao.arthas.manage.dao.domain.AppClientDo;
 import com.taobao.arthas.manage.vo.AppClusterVo;
 
@@ -33,8 +32,6 @@ public class ManageController {
 
 	@Resource
 	private AppClientDao appClientDao;
-	@Resource
-	private OptTaskDao optTaskDao;
 
 	/**
 	 * 查看保持连接的所有App
@@ -68,6 +65,8 @@ public class ManageController {
 		return JSON.toJSONString(HttpResponseVo.success(resultList));
 	}
 
+	
+	////////////////////////////////////Test
 	/**
 	 * 执行attach
 	 * 
