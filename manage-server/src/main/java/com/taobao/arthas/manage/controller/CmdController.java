@@ -62,7 +62,7 @@ public class CmdController {
 			//查询app client 的attach 状态
 			AppClientDo appClientDo = appClientDao.getOne(appId);
 			Integer taskStatus = TaskStatusEnum.INIT.getCode();
-			if(Boolean.FALSE.equals(appClientDo.getIsAttached())) {
+			if(Boolean.TRUE.equals(appClientDo.getIsAttached())) {
 				taskStatus = TaskStatusEnum.CMD_DONING.getCode();
 			}else {
 				//attach到目标进程
