@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -17,6 +19,7 @@ import com.taobao.arthas.manage.dao.domain.TaskDo;
 
 @Component
 public class TaskService {
+	private final Logger logger = LoggerFactory.getLogger(TaskService.class);
 
 	@Resource
 	private TaskDao taskDao;
@@ -63,8 +66,10 @@ public class TaskService {
 					public void run() {
 						// 发送命令行
 						ICommandSender commandSender = new TelnetCommandSender(appClientDo.getAppIp(), appClientDo.getCmdTelnetPort());
+						logger.info("发送命令:{}",taskDo.getCmd());
 						String cmdResult = commandSender.sendCommand(taskDo.getCmd());
-
+						logger.info("接收到命令执行结果:{}",cmdResult);
+						
 						// 保存任务执行结果
 						taskDao.updateCmdResult(taskId, cmdResult);
 						

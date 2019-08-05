@@ -50,6 +50,7 @@ public class CmdController {
 		//保存总任务
 		TaskDo parentTaskDo = new TaskDo();
 		parentTaskDo.setCmd(cmd);
+		parentTaskDo.setUserId(loginUserId);
 		taskDao.save(parentTaskDo);
 		
 		//保存子任务
