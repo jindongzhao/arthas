@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +20,7 @@ import com.taobao.arthas.manage.common.HttpResponseVo;
 import com.taobao.arthas.manage.dao.AppClientDao;
 import com.taobao.arthas.manage.dao.OptTaskDao;
 import com.taobao.arthas.manage.dao.domain.AppClientDo;
+import com.taobao.arthas.manage.vo.AppClusterVo;
 
 /**
  * 管理页面请求 controller
@@ -48,6 +48,23 @@ public class ManageController {
 	@RequestMapping("/manage/getAppClientList")
 	public String getAliveAppList() {
 		List<AppClientDo> resultList = appClientDao.findAll();
+		return JSON.toJSONString(HttpResponseVo.success(resultList));
+	}
+	
+	/**
+	 * 查看集群列表
+	 * 
+	 * @Description
+	 * @param
+	 * @return
+	 * @throws @author:
+	 *             zhaojindong @date: 20 Jun 2019 14:28:17
+	 */
+	@RequestMapping("/manage/getAppClusterList")
+	public String getAppClusterList() {
+		List<AppClusterVo> resultList = new ArrayList<>();
+		List<AppClientDo> appList = appClientDao.findAll();
+		//TODO 转化
 		return JSON.toJSONString(HttpResponseVo.success(resultList));
 	}
 
@@ -102,12 +119,8 @@ public class ManageController {
 		//查询应用配置信息
 		List<Long> idList = convertAppClientIdList(appClientIdListStr);
 		for(Long id : idList) {
-			//Optional<AppClientDo> appClientDoOpt = appClientDao.findById(id);
-			//AppClientDo appClientDo = appClientDoOpt.get();
-			//ICommandSender commandSender = new TelnetCommandSender(appClientDo.getAppIp(),appClientDo.getCmdTelnetPort());
-			
-			//MOCK TODO 解决rt.jar的依赖
-			ICommandSender commandSender = new TelnetCommandSender("127.0.0.1",3658);
+			AppClientDo appClientDo = appClientDao.getOne(id);
+			ICommandSender commandSender = new TelnetCommandSender(appClientDo.getAppIp(),appClientDo.getCmdTelnetPort());
 			String response = commandSender.sendCommand(cmd);
 			resultMap.put("id-"+id+"cmd-"+cmd, response);
 		}
