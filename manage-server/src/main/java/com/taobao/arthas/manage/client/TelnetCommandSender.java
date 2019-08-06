@@ -26,6 +26,9 @@ public class TelnetCommandSender implements ICommandSender {
 		this.telnetPort = telnetPort;
 	}
 
+	/**
+	 * 向目标java进程发送telnet命令
+	 */
 	public String sendCommand(String cmd) {
 		// zjd 客户端
 		final TelnetClient telnet = new TelnetClient();
@@ -60,13 +63,21 @@ public class TelnetCommandSender implements ICommandSender {
 		try {
 			StringBuilder sBuffer = new StringBuilder();
 			byte[] b = new byte[DEFAULT_BUFFER_SIZE];
+			boolean isFirstPrompt = true;
 			while (true) {
 				int size = in.read(b);
 				if (-1 != size) {
 					sBuffer.append(new String(b, 0, size));
 					String data = sBuffer.toString();
 					if (data.trim().endsWith(prompt)) {
-						break;
+						if(!isFirstPrompt) {
+							break;
+						}else {
+							//telent建立连接后会先发送一个prompt过来，忽略这个字符
+							isFirstPrompt = false;
+							b = new byte[DEFAULT_BUFFER_SIZE];
+							sBuffer = new StringBuilder();
+						}
 					}
 				}
 			}
