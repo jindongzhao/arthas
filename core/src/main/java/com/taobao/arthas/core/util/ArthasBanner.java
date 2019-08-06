@@ -94,13 +94,16 @@ public class ArthasBanner {
 
     public static String welcome() {
         logger.info("arthas version: " + version());
-        TableElement table = new TableElement().rightCellPadding(1)
+        //直接返回null，系统直接对接，不需要welcome信息
+        return null;
+        
+        /*TableElement table = new TableElement().rightCellPadding(1)
                         .row("wiki", wiki())
                         .row("tutorials", tutorials())
                         .row("version", version())
                         .row("pid", PidUtils.currentPid())
                         .row("time", DateUtils.getCurrentDate());
 
-        return logo() + "\n" + RenderUtil.render(table);
+        return logo() + "\n" + RenderUtil.render(table);*/
     }
 }
