@@ -57,7 +57,7 @@ public class TaskDo extends BaseDo {
 	/**
 	 * 命令执行结果
 	 */
-	@Column(nullable = true)
+	@Column(nullable = true, length = 10240)
 	private String cmdResult;
 
 	public Long getId() {
