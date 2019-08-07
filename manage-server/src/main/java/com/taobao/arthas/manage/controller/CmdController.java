@@ -1,5 +1,6 @@
 package com.taobao.arthas.manage.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -17,6 +18,7 @@ import com.taobao.arthas.manage.dao.domain.AppClientDo;
 import com.taobao.arthas.manage.dao.domain.TaskDo;
 import com.taobao.arthas.manage.service.AppClientService;
 import com.taobao.arthas.manage.service.TaskService;
+import com.taobao.arthas.manage.vo.TaskVo;
 
 /**
  * 执行具体命令的controller
@@ -83,6 +85,42 @@ public class CmdController {
 		
 		//返回总任务的id到页面
 		return JSON.toJSONString(HttpResponseVo.success(parentTaskDo.getId()));
+	}
+	
+	/**
+	 * 查询命令执行结果
+	* @Description 
+	* @param 
+	* @return 
+	* @throws 
+	* @author: zhaojindong  @date: 5 Aug 2019 14:28:24
+	 */
+	@RequestMapping("/manage/cmd/getCmdResult")
+	public String getCmdResult(@RequestParam(name = "taskId", required = true) Long taskId) {
+		TaskVo taskVo = new TaskVo();
+		
+		TaskDo parentTaskDo = taskDao.getOne(taskId);
+		taskVo.setTaskId(parentTaskDo.getId());
+		taskVo.setCmd(parentTaskDo.getCmd());
+		taskVo.setStatus(parentTaskDo.getStatus());
+		
+		List<TaskDo> childTaskList = taskDao.getByParentId(parentTaskDo.getId());
+		if(childTaskList != null) {
+			List<TaskVo> taskVoList = new ArrayList<TaskVo>();
+			for(TaskDo childTaskDo : childTaskList) {
+				TaskVo childTaskVo = new TaskVo();
+				AppClientDo appClientDo = appClientDao.getOne(childTaskDo.getAppClientId());
+				childTaskVo.setAppIp(appClientDo.getAppIp());
+				childTaskVo.setCmd(childTaskDo.getCmd());
+				childTaskVo.setCmdResult(childTaskDo.getCmdResult());
+				childTaskVo.setTaskId(childTaskDo.getId());
+				childTaskVo.setStatus(childTaskDo.getStatus());
+				taskVoList.add(childTaskVo);
+			}
+			taskVo.setChildList(taskVoList);
+		}
+		
+		return JSON.toJSONString(HttpResponseVo.success(taskVo));
 	}
 
 }

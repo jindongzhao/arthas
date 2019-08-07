@@ -2,6 +2,7 @@ package com.taobao.arthas.manage.dao;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.taobao.arthas.manage.dao.domain.TaskDo;
+import com.taobao.arthas.manage.dao.domain.User;
 
 /**
  * 任务
@@ -55,5 +57,16 @@ public interface TaskDao extends JpaRepository<TaskDo, Long> {
 	@Modifying
 	@Query("update TaskDo set cmdResult = :cmdResult where id = :id")
 	int updateCmdResult( @Param("id") Long id, @Param("cmdResult")  String cmdResult);
+	
+	/**
+	 * 根据父任务taskId查询
+	* @Description 
+	* @param 
+	* @return 
+	* @throws 
+	* @author: zhaojindong  @date: 6 Aug 2019 21:49:52
+	 */
+	@Query("select t from TaskDo t where t.parentId = :parentId")
+	List<TaskDo> getByParentId(@Param("parentId") Long parentId);
 
 }
